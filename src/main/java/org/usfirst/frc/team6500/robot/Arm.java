@@ -10,7 +10,7 @@ import org.usfirst.frc.team6500.trc.util.TRCTypes.SpeedControllerType;
 
 
 public class Arm extends TRCDirectionalSystem{
-    static spark left, right;
+    static SpeedControllerType left, right;
     private static boolean armReady;
 
     public Arm (int[] motorPorts, SpeedControllerType[] motorType)
@@ -19,18 +19,18 @@ public class Arm extends TRCDirectionalSystem{
     }
     public void armToUp()
     {
-        while(!((WPI_TalonSRX) this.outputMotors.get(0).getsensorCollection().isFwdLimitSwitchClosed()))
-        {
-        this.driveForward();
-        }
-       this.fullstop();
+    //     while(!((WPI_TalonSRX) this.outputMotors.get(0).getsensorCollection().isFwdLimitSwitchClosed()))
+    //     {
+    //     this.driveForward();
+    //     }
+    //    this.fullstop();
     }
     public void armToDown()
     {
-        while(!((WPI_TalonSRX) this.outputMotors.get(0).getsensorCollection().isFwdLimitSwitchClosed()))
-        {
-        this.driveReverse();
-        }
-       this.fullstop();
+    //     while(!((WPI_TalonSRX) this.outputMotors.get(0).getsensorCollection().isFwdLimitSwitchClosed()))
+    //     {
+    //     this.driveReverse();
+    //     }
+    //    this.fullstop();
     }
 }
