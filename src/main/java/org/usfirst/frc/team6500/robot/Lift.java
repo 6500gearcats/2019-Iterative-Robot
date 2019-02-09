@@ -10,12 +10,16 @@ import java.util.List;
 public class Lift {
 
     TRCDirectionalSystem liftDrive;
-    TRCEncoder baseSwitch;
+    //TRCEncoder baseSwitch;
     Double dFSpeed = 1.0, dRSpeed = 1.0;
 
     DigitalInput switchBase, switchTop;
 
-    List<LiftStation> levels;
+    enum LiftDirection {
+        DOWN, UP, STOP
+    };
+
+    List<LiftStation> levels;   // list of floors or levels
     TRCEncoder locationEncoder;
 
     Double currentLocation = 0.0;
@@ -24,19 +28,17 @@ public class Lift {
     Double upperTravel = 0.0;
     LiftDirection currentDirection;
 
+    // a LiftStation is a floor, or stopping point, optional switch, height is mandatory
     class LiftStation {
         DigitalInput floorSwitch = null;
         Double height = 0.0;
 
-        LiftStation(DigitalInput floor, Double h) {
+        LiftStation(DigitalInput floor, Double height) {
             floorSwitch = floor;
-            height = h;
+            this.height = height;
         }
     }
 
-    enum LiftDirection {
-        DOWN, UP, STOP
-    };
 
     Lift(int[] motorPorts, SpeedControllerType[] motorTypes, int baseSwitch, int topSwitch, TRCEncoder locEncoder) {
         // super(motorPorts, motorTypes, true, 1.0, -0.6);
@@ -46,6 +48,7 @@ public class Lift {
         locationEncoder = locEncoder;
     }
 
+    // Add a new "floor" to the lift's list of floors
     int addLevel(DigitalInput levelSwitch, Double height) {
         levels.add(new LiftStation(levelSwitch, height));
         if (height > upperTravel)
@@ -99,6 +102,11 @@ public class Lift {
         case STOP:
             break;
         }
+    }
+
+    public void stop() {
+        liftDrive.fullStop();
+        currentDirection = LiftDirection.STOP;
     }
 
     public void gotoToLevel(int level) {
