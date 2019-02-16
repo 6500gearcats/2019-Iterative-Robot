@@ -42,7 +42,7 @@ public class Robot extends TimedRobot
         // Setup: Communications
         TRCNetworkData.initializeNetworkData(TRCTypes.DataInterfaceType.Board);
         TRCNetworkVision.initializeVision();
-        TRCCamera.initializeCamera();
+        //TRCCamera.initializeCamera();
 
 
         // Setup: Systems: Drivetrain

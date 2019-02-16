@@ -20,6 +20,7 @@ public class Lift extends TRCDirectionalSystem
     {
         super(motorPorts, motorTypes, true, Constants.LIFT_SPEED_UP, Constants.LIFT_SPEED_DOWN);
 
+        liftSwitches = new ArrayList<DigitalInput>();
         for (int i = 0; i < Constants.LIFT_SWITCH_PORTS.length; i++)
         {
             liftSwitches.add(i, new DigitalInput(Constants.LIFT_SWITCH_PORTS[i]));
