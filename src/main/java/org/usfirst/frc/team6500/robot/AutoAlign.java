@@ -59,6 +59,7 @@ public class AutoAlign
     public static void alignWithFloorTape()
     {
         if (!isReady) { return; }
+        visionTable.getEntry("mode").setString("Near");
 
         boolean running = true;
 
@@ -70,23 +71,27 @@ public class AutoAlign
             {
                 drive.driveCartesian(Constants.SPEED_AUTO_LINE, 0.0, 0.0);
             }
+            
             else if (instruction.equals("ML")) // Move Left
             {
-                drive.driveCartesian(0.0, -Constants.SPEED_AUTO_LINE, 0.0);
+                drive.driveCartesian(0.0, Constants.SPEED_AUTO_LINE_STRAFE, 0.025);
             }
             else if (instruction.equals("MR")) // Move Right
             {
-                drive.driveCartesian(0.0, Constants.SPEED_AUTO_LINE, 0.0);
+                drive.driveCartesian(0.0, -Constants.SPEED_AUTO_LINE_STRAFE, -0.025);
             }
 
             else if (instruction.equals("TL")) // Turn Left
             {
-                drive.driveCartesian(0.0, 0.0, -Constants.SPEED_AUTO_LINE);
+                drive.driveCartesian(0.0, 0.0, -Constants.SPEED_AUTO_LINE_TURN);
             }
             else if (instruction.equals("TR")) // Turn Right
             {
-                drive.driveCartesian(0.0, 0.0, Constants.SPEED_AUTO_LINE);
+                drive.driveCartesian(0.0, 0.0, Constants.SPEED_AUTO_LINE_TURN);
             }
+
+            TRCNetworkData.updateDataPoint("Left Proximity", AutoAlign.calculateUltrasonicDistance(leftProx.getVoltage()));
+            TRCNetworkData.updateDataPoint("Right Proximity", AutoAlign.calculateUltrasonicDistance(rightProx.getVoltage()));
 
 
             if (calculateUltrasonicDistance(leftProx.getVoltage()) <= Constants.PROXIMITY_THRESHOLD_MM && calculateUltrasonicDistance(rightProx.getVoltage()) <= Constants.PROXIMITY_THRESHOLD_MM)
@@ -94,6 +99,8 @@ public class AutoAlign
                 running = false; // If we're close enough on both sides, we're good
             }
         }
+
+        visionTable.getEntry("mode").setString("None");
     }
 
     public static void align()

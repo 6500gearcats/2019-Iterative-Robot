@@ -20,21 +20,41 @@ public class Grabber extends TRCDirectionalSystem
         isReady = true;
     }
 
-
     @Override
-    public void driveReverse() // Intake
+    public void driveReverse()
     {
-        if (!isReady) { return; }
+        WPI_TalonSRX grabLeft = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
+        WPI_TalonSRX grabRight = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[1]);
 
-        long startTime = System.currentTimeMillis();
-        while (!((WPI_TalonSRX) this.outputMotors.get(ports[0])).getSensorCollection().isRevLimitSwitchClosed())
+        // System.out.println(grabLeft.getSensorCollection().isFwdLimitSwitchClosed());
+        // System.out.println(grabLeft.getSensorCollection().isRevLimitSwitchClosed());
+        // System.out.println(grabRight.getSensorCollection().isFwdLimitSwitchClosed());
+        // System.out.println(grabRight.getSensorCollection().isRevLimitSwitchClosed());
+        if (!grabLeft.getSensorCollection().isRevLimitSwitchClosed())
         {
-            this.driveReverse();
-
-            if (System.currentTimeMillis() - startTime > 2000) // If we don't get a cargo after 2 seconds, give up
-            {
-                break;
-            }
+            super.driveReverse();
+        }
+        else
+        {
+            super.fullStop();
         }
     }
+
+
+    // @Override
+    // public void driveReverse() // Intake
+    // {
+    //     if (!isReady) { return; }
+
+    //     long startTime = System.currentTimeMillis();
+    //     while (!((WPI_TalonSRX) this.outputMotors.get(ports[0])).getSensorCollection().isRevLimitSwitchClosed())
+    //     {
+    //         this.driveReverse();
+
+    //         if (System.currentTimeMillis() - startTime > 2000) // If we don't get a cargo after 2 seconds, give up
+    //         {
+    //             break;
+    //         }
+    //     }
+    // }
 }
