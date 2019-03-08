@@ -11,8 +11,9 @@ public class Constants
     // public static final ControllerType INPUT_TYPES[] = {ControllerType.Extreme3D, ControllerType.Extreme3D};
 
     public static final int INPUT_DRIVER_PORT = 0;
+    // public static final int INPUT_GUNNER_PORT = 1;
     public static final int INPUT_PORTS[] = {INPUT_DRIVER_PORT};
-    public static final ControllerType INPUT_TYPES[] = {ControllerType.Extreme3D};
+    public static final ControllerType INPUT_TYPES[] = {ControllerType.Xbox360};
 
     public static final int INPUT_ARM_UP_BUTTON     = 4;
     public static final int INPUT_ARM_DOWN_BUTTON   = 6;
@@ -75,6 +76,7 @@ public class Constants
     public final static int LIFT_SWITCH_PORTS[]                   = {0, 1, 2, 3, 4};
     public final static int LIFT_MAX_STALL_CURRENT                = 5;
     public final static double LIFT_TARGET_HEIGHTS[]              = {0, -7000, -14000, -19000, -22500, -0};
+    public final static int LIFT_BOTTOM_SWITCH                    = 9;
     
     public final static int GRABBER_MOTOR_LEFT                    = 8;
     public final static int GRABBER_MOTOR_RIGHT                   = 9;
