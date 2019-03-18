@@ -11,6 +11,7 @@ import org.usfirst.frc.team6500.trc.systems.TRCDirectionalSystem;
 import org.usfirst.frc.team6500.trc.systems.TRCDriveInput;
 import org.usfirst.frc.team6500.trc.systems.TRCPneumaticSystem;
 import org.usfirst.frc.team6500.trc.util.TRCNetworkData;
+import org.usfirst.frc.team6500.trc.util.TRCSpeed;
 import org.usfirst.frc.team6500.trc.util.TRCTypes.*;
 import org.usfirst.frc.team6500.trc.util.TRCDriveParams;
 import org.usfirst.frc.team6500.trc.util.TRCController;
@@ -36,18 +37,7 @@ public class Robot extends TimedRobot
     AnalogInput leftProx, rightProx;
     DigitalInput liftBottom;
     int positionOptionID, targetOptionID;
-
-    // void extendPistons()
-    // {
-    //     close.set(false);
-    //     open.set(true);
-    // }
-
-    // void retractPistons()
-    // {
-    //     open.set(false);
-    //     close.set(true);
-    // }
+    TRCSpeed xS, yS, zS;
 
 
     /**
@@ -79,21 +69,16 @@ public class Robot extends TimedRobot
         drive = new TRCMecanumDrive(Constants.DRIVE_WHEEL_PORTS, Constants.DRIVE_WHEEL_TYPES, Constants.DRIVE_WHEEL_INVERTS, true);
  
         // Setup: Systems: Directional
-        // lift    = new Lift(Constants.LIFT_MOTORS, Constants.LIFT_MOTOR_TYPES);
-        // grabber = new Grabber(Constants.GRABBER_MOTORS, Constants.GRABBER_MOTOR_TYPES);
-        // arm     = new Arm(Constants.ARM_MOTORS, Constants.ARM_MOTOR_TYPES);
-        // lift = new TRCDirectionalSystem(Constants.LIFT_MOTORS, Constants.LIFT_MOTOR_TYPES, false, Constants.LIFT_SPEED_UP, Constants.LIFT_SPEED_DOWN);
-        // TRCDirectionalSystemAction.registerSystem("Lift", lift);
-        // TRCDirectionalSystemAction.registerSystem("Grabber", grabber);
-        // TRCDirectionalSystemAction.registerSystem("Arm", arm);
+        lift    = new Lift(Constants.LIFT_MOTORS, Constants.LIFT_MOTOR_TYPES);
+        grabber = new Grabber(Constants.GRABBER_MOTORS, Constants.GRABBER_MOTOR_TYPES);
+        arm     = new Arm(Constants.ARM_MOTORS, Constants.ARM_MOTOR_TYPES);
+        TRCDirectionalSystemAction.registerSystem("Lift", lift);
+        TRCDirectionalSystemAction.registerSystem("Grabber", grabber);
+        TRCDirectionalSystemAction.registerSystem("Arm", arm);
 
         TRCPneumaticSystem.setupPneumatics(Constants.PNEUMATICS_PCM_ID);
-        // pokie = new TRCPneumaticSystem(Constants.POKIE_PORTS, true);
-        // TRCPneumaticSystemAction.registerSystem("Pokie", pokie);
-        // open = new Solenoid(Constants.PNEUMATICS_PCM_ID, Constants.POKIE_PORT_EXTEND);
-        // close = new Solenoid(Constants.PNEUMATICS_PCM_ID, Constants.POKIE_PORT_RETRACT);
-
-        Ramps.initilizeRamps();
+        pokie = new TRCPneumaticSystem(Constants.POKIE_PORTS, true);
+        TRCPneumaticSystemAction.registerSystem("Pokie", pokie);
 
 
         // Setup: Systems: Sensors
@@ -103,12 +88,12 @@ public class Robot extends TimedRobot
         leftProx  = new AnalogInput(Constants.PROXIMITY_LEFT);
         rightProx = new AnalogInput(Constants.PROXIMITY_RIGHT);
 
-        // liftBottom = new DigitalInput(Constants.LIFT_BOTTOM_SWITCH);
+        liftBottom = new DigitalInput(Constants.LIFT_BOTTOM_SWITCH);
 
 
         // Setup: Autonomous
-        // TRCDrivePID.initializeTRCDrivePID(encoders, gyro, drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
-        // AutoAlign.setupAlignment(drive, leftProx, rightProx);
+        TRCDrivePID.initializeTRCDrivePID(encoders, gyro, drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
+        AutoAlign.setupAlignment(drive, leftProx, rightProx);
 
 
         // Setup: Input
@@ -123,25 +108,25 @@ public class Robot extends TimedRobot
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L1_CARGO, AutoProcess::levelOneCargo);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L2_CARGO, AutoProcess::levelTwoCargo);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L3_CARGO, AutoProcess::levelThreeCargo);
-        // TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_LIFT_ELEVATE_BUTTON, lift::driveForward);
-        // TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_LIFT_DESCEND_BUTTON, lift::driveReverse);
-        // TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, Constants.INPUT_LIFT_BUTTONS, lift::fullStop);
 
-        // TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_POKIE_EXTEND_BUTTON, pokie::fullOpen);
-        // TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_POKIE_RETRACT_BUTTON, pokie::fullClose);
+        // Setup: Input: Button Bindings: Gunner Functions
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_LIFT_ELEVATE_BUTTON, lift::driveForward);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_LIFT_DESCEND_BUTTON, lift::driveReverse);
+        TRCDriveInput.bindButtonAbsence(Constants.INPUT_GUNNER_PORT, Constants.INPUT_LIFT_BUTTONS, lift::fullStop);
 
-        // TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_GRABBER_INTAKE_BUTTON, grabber::driveForward);
-        // TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_GRABBER_EXPEL_BUTTON, grabber::driveReverse);
-        // TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, Constants.INPUT_GRABBER_BUTTONS, grabber::fullStop);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_POKIE_EXTEND_BUTTON, pokie::fullOpen);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_POKIE_RETRACT_BUTTON, pokie::fullClose);
 
-        // TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_ARM_UP_BUTTON, arm::driveForward);
-        // TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_ARM_DOWN_BUTTON, arm::driveReverse);
-        // TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, Constants.INPUT_ARM_BUTTONS, arm::fullStop);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_GRABBER_INTAKE_BUTTON, grabber::driveForward);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_GRABBER_EXPEL_BUTTON, grabber::driveReverse);
+        TRCDriveInput.bindButtonAbsence(Constants.INPUT_GUNNER_PORT, Constants.INPUT_GRABBER_BUTTONS, grabber::fullStop);
 
-        TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, 10, AutoAlign::alignWithFloorTape);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_UP_BUTTON, arm::driveReverse);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_DOWN_BUTTON, arm::driveForward);
+        TRCDriveInput.bindButtonAbsence(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_BUTTONS, arm::fullStop);
 
-        // Setup: Input: Button Bindings: Ramps
-        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_RAMP_RELEASE_BUTTON, Ramps::releaseRamps);
+        // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, 10, AutoAlign::alignWithFloorTape);
+        xS = new TRCSpeed(); yS = new TRCSpeed(); zS = new TRCSpeed();
     }
 
     /**
@@ -160,10 +145,7 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic()
     {
-        // Check all inputs
-        TRCDriveInput.checkButtonBindings();
-        // And drive the robot
-        drive.driveCartesian(TRCDriveInput.getStickDriveParams(Constants.INPUT_DRIVER_PORT));
+        driveRobot();
     }
 
     /**
@@ -188,6 +170,11 @@ public class Robot extends TimedRobot
     @Override
     public void teleopPeriodic()
     {
+        driveRobot();
+    }
+
+    public void driveRobot()
+    {
         // Check all inputs
         TRCDriveInput.checkButtonBindings();
         // And drive the robot
@@ -195,16 +182,35 @@ public class Robot extends TimedRobot
         double x = input.getRawX();
         double z = input.getRawZ();
         double y = input.getRawY();
-        input.setRawY(-justify(y));
-        input.setRawX(-justify(x));
-        input.setRawZ(justify(z));
+        input.setRawY(yS.calculateSpeed(-justify(y)));
+        input.setRawX(xS.calculateSpeed(-justify(x)));
+        input.setRawZ(zS.calculateSpeed(justify(z)));
+
         TRCController d = TRCDriveInput.getController(Constants.INPUT_DRIVER_PORT);
-        if (!d.getButton(5)) {
-        input.setM(1.0 - TRCDriveInput.getRawThrottle(Constants.INPUT_DRIVER_PORT));}
+        double m = 0.0;
+        if (Constants.INPUT_TYPES[Constants.INPUT_DRIVER_PORT] == ControllerType.Xbox360) { m = (1.0 - TRCDriveInput.getRawThrottle(Constants.INPUT_DRIVER_PORT)); }
+        else { m = TRCDriveInput.getThrottle(Constants.INPUT_DRIVER_PORT); }
+
+        int slowButton = 0; // What button to use to set the robot into slow (half power) mode for making smaller movements
+        if (Constants.INPUT_TYPES[Constants.INPUT_DRIVER_PORT] == ControllerType.Xbox360)
+        {
+            slowButton = 5; // Left Bumper
+        }
         else
         {
-            input.setM((1.0 - TRCDriveInput.getRawThrottle(Constants.INPUT_DRIVER_PORT)) / 2);
+            slowButton = 2; // Thumb Button
         }
+
+        if (!d.getButton(slowButton))
+        {
+            input.setM(m);
+        }
+        else
+        {
+            input.setM(m / 2);
+        }
+
+
         drive.driveCartesian(input);
 
         TRCNetworkData.updateDataPoint("Encoder Output", encoders.getAverageDistanceTraveled(DirectionType.ForwardBackward));
@@ -215,7 +221,7 @@ public class Robot extends TimedRobot
         TRCNetworkData.updateDataPoint("Gyro", gyro.getAngle());
         TRCNetworkData.updateDataPoint("Left Proximity", AutoAlign.calculateUltrasonicDistance(leftProx.getVoltage()));
         TRCNetworkData.updateDataPoint("Right Proximity", AutoAlign.calculateUltrasonicDistance(rightProx.getVoltage()));
-        //TRCNetworkData.updateDataPoint("Switch", liftBottom.get());
+        TRCNetworkData.updateDataPoint("Switch", liftBottom.get());
     }
 
     public static void main(String... args)

@@ -11,12 +11,12 @@ public class Constants
     // public static final ControllerType INPUT_TYPES[] = {ControllerType.Extreme3D, ControllerType.Extreme3D};
 
     public static final int INPUT_DRIVER_PORT = 0;
-    // public static final int INPUT_GUNNER_PORT = 1;
-    public static final int INPUT_PORTS[] = {INPUT_DRIVER_PORT};
-    public static final ControllerType INPUT_TYPES[] = {ControllerType.Xbox360};
+    public static final int INPUT_GUNNER_PORT = 1;
+    public static final int INPUT_PORTS[] = {INPUT_DRIVER_PORT, INPUT_GUNNER_PORT};
+    public static final ControllerType INPUT_TYPES[] = {ControllerType.Xbox360, ControllerType.Extreme3D};
 
-    public static final int INPUT_ARM_UP_BUTTON     = 4;
-    public static final int INPUT_ARM_DOWN_BUTTON   = 6;
+    public static final int INPUT_ARM_UP_BUTTON     = 6;
+    public static final int INPUT_ARM_DOWN_BUTTON   = 4;
     public static final Object INPUT_ARM_BUTTONS[]  = {INPUT_ARM_UP_BUTTON, INPUT_ARM_DOWN_BUTTON};
 
     public static final int INPUT_LIFT_ELEVATE_BUTTON = 1;
@@ -34,17 +34,17 @@ public class Constants
     // public static final int INPUT_PORTS[] = {INPUT_DRIVER_PORT};
     // public static final ControllerType INPUT_TYPES[] = {ControllerType.Xbox360};
 
-    public static final int INPUT_RAMP_RELEASE_BUTTON = 5;
+    // public static final int INPUT_RAMP_RELEASE_BUTTON = 5;
  
-    public static final int INPUT_AUTO_LINE_BUTTON    = 12;
-    public static final int INPUT_AUTO_GET_PANEL      = 3;
-    public static final int INPUT_AUTO_GET_CARGO      = 4;
-    public static final int INPUT_AUTO_L1_PANEL       = 11;
-    public static final int INPUT_AUTO_L2_PANEL       = 9;
-    public static final int INPUT_AUTO_L3_PANEL       = 7;
-    public static final int INPUT_AUTO_L1_CARGO       = 12;
-    public static final int INPUT_AUTO_L2_CARGO       = 10;
-    public static final int INPUT_AUTO_L3_CARGO       = 8;
+    // public static final int INPUT_AUTO_LINE_BUTTON    = 12;
+    // public static final int INPUT_AUTO_GET_PANEL      = 3;
+    // public static final int INPUT_AUTO_GET_CARGO      = 4;
+    // public static final int INPUT_AUTO_L1_PANEL       = 11;
+    // public static final int INPUT_AUTO_L2_PANEL       = 9;
+    // public static final int INPUT_AUTO_L3_PANEL       = 7;
+    // public static final int INPUT_AUTO_L1_CARGO       = 12;
+    // public static final int INPUT_AUTO_L2_CARGO       = 10;
+    // public static final int INPUT_AUTO_L3_CARGO       = 8;
 
 
     // Speed Constants
