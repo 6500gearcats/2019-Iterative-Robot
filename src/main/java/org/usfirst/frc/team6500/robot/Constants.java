@@ -1,41 +1,37 @@
 package org.usfirst.frc.team6500.robot;
 
+
 import org.usfirst.frc.team6500.trc.util.TRCTypes.*;
+
 
 public class Constants
 {
     // Input Constants
-    // public static final int INPUT_DRIVER_PORT         = 0;
-    // public static final int INPUT_GUNNER_PORT         = 1;
-    // public static final int INPUT_PORTS[]             = {INPUT_DRIVER_PORT, INPUT_GUNNER_PORT};
-    // public static final ControllerType INPUT_TYPES[] = {ControllerType.Extreme3D, ControllerType.Extreme3D};
+    public static final int INPUT_DRIVER_PORT           = 0;
+    public static final int INPUT_GUNNER_PORT           = 1;
+    public static final int INPUT_PORTS[]               = {INPUT_DRIVER_PORT, INPUT_GUNNER_PORT};
+    public static final ControllerType INPUT_TYPES[]    = {ControllerType.Xbox360, ControllerType.Extreme3D};
 
-    public static final int INPUT_DRIVER_PORT = 0;
-    public static final int INPUT_GUNNER_PORT = 1;
-    public static final int INPUT_PORTS[] = {INPUT_DRIVER_PORT, INPUT_GUNNER_PORT};
-    public static final ControllerType INPUT_TYPES[] = {ControllerType.Xbox360, ControllerType.Extreme3D};
+    public static final int INPUT_ARM_UP_BUTTON         = 6;
+    public static final int INPUT_ARM_DOWN_BUTTON       = 4;
+    public static final Object INPUT_ARM_BUTTONS[]      = {INPUT_ARM_UP_BUTTON, INPUT_ARM_DOWN_BUTTON};
 
-    public static final int INPUT_ARM_UP_BUTTON     = 6;
-    public static final int INPUT_ARM_DOWN_BUTTON   = 4;
-    public static final Object INPUT_ARM_BUTTONS[]  = {INPUT_ARM_UP_BUTTON, INPUT_ARM_DOWN_BUTTON};
-
-    public static final int INPUT_LIFT_ELEVATE_BUTTON = 1;
-    public static final int INPUT_LIFT_DESCEND_BUTTON = 2;
-    public static final Object INPUT_LIFT_BUTTONS[]      = {INPUT_LIFT_ELEVATE_BUTTON, INPUT_LIFT_DESCEND_BUTTON};
+    public static final int INPUT_LIFT_ELEVATE_BUTTON   = 1;
+    public static final int INPUT_LIFT_DESCEND_BUTTON   = 2;
+    public static final Object INPUT_LIFT_BUTTONS[]     = {INPUT_LIFT_ELEVATE_BUTTON, INPUT_LIFT_DESCEND_BUTTON};
 
     public static final int INPUT_GRABBER_INTAKE_BUTTON = 7;
-    public static final int INPUT_GRABBER_EXPEL_BUTTON = 8;
-    public static final Object INPUT_GRABBER_BUTTONS[]      = {INPUT_GRABBER_INTAKE_BUTTON, INPUT_GRABBER_EXPEL_BUTTON};
+    public static final int INPUT_GRABBER_EXPEL_BUTTON  = 8;
+    public static final Object INPUT_GRABBER_BUTTONS[]  = {INPUT_GRABBER_INTAKE_BUTTON, INPUT_GRABBER_EXPEL_BUTTON};
 
-    public static final int INPUT_POKIE_EXTEND_BUTTON = 3;
-    public static final int INPUT_POKIE_RETRACT_BUTTON = 5;
+    public static final int INPUT_POKIE_EXTEND_BUTTON   = 3;
+    public static final int INPUT_POKIE_RETRACT_BUTTON  = 5;
 
-    // public static final int INPUT_DRIVER_PORT = 0;
-    // public static final int INPUT_PORTS[] = {INPUT_DRIVER_PORT};
-    // public static final ControllerType INPUT_TYPES[] = {ControllerType.Xbox360};
+    public static final double INPUT_DRIVE_DEADBAND     = 0.1;
+    // ternary ftw
+    public static final int INPUT_DRIVE_SLOW            = (INPUT_TYPES[INPUT_DRIVER_PORT] == ControllerType.Xbox360) ? 5 : 2;
+    public static final Object INPUT_DRIVE_BUTTONS[]    = {INPUT_DRIVE_SLOW};
 
-    // public static final int INPUT_RAMP_RELEASE_BUTTON = 5;
- 
     // public static final int INPUT_AUTO_LINE_BUTTON    = 12;
     // public static final int INPUT_AUTO_GET_PANEL      = 3;
     // public static final int INPUT_AUTO_GET_CARGO      = 4;
@@ -48,12 +44,12 @@ public class Constants
 
 
     // Speed Constants
-    public static final double SPEED_BASE       = 0.85;
-    public static final double SPEED_BOOST      = 0.95;
-    public static final double SPEED_AUTO_TAPE  = 0.65;
-    public static final double SPEED_AUTO_LINE  = 0.275;
+    public static final double SPEED_BASE              = 0.85;
+    public static final double SPEED_BOOST             = 0.95;
+    public static final double SPEED_AUTO_TAPE         = 0.65;
+    public static final double SPEED_AUTO_LINE         = 0.275;
     public static final double SPEED_AUTO_LINE_STRAFE  = 0.325;
-    public static final double SPEED_AUTO_LINE_TURN  = 0.2;
+    public static final double SPEED_AUTO_LINE_TURN    = 0.2;
 
 
     // Drive Constants
@@ -119,5 +115,6 @@ public class Constants
     public final static double PROXIMITY_THRESHOLD_MM = 350.0;
 
 
+    // Pneumatics Constants
     public final static int PNEUMATICS_PCM_ID = 10;
 }

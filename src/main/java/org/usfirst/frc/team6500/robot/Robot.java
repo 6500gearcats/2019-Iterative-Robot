@@ -11,19 +11,15 @@ import org.usfirst.frc.team6500.trc.systems.TRCDirectionalSystem;
 import org.usfirst.frc.team6500.trc.systems.TRCDriveInput;
 import org.usfirst.frc.team6500.trc.systems.TRCPneumaticSystem;
 import org.usfirst.frc.team6500.trc.util.TRCNetworkData;
-import org.usfirst.frc.team6500.trc.util.TRCSpeed;
 import org.usfirst.frc.team6500.trc.util.TRCTypes.*;
 import org.usfirst.frc.team6500.trc.util.TRCDriveParams;
-import org.usfirst.frc.team6500.trc.util.TRCController;
 import org.usfirst.frc.team6500.trc.wrappers.sensors.TRCEncoderSet;
 import org.usfirst.frc.team6500.trc.wrappers.sensors.TRCGyroBase;
-import org.usfirst.frc.team6500.trc.wrappers.systems.drives.TRCMecanumDrive;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Solenoid;
 
 
 public class Robot extends TimedRobot
@@ -31,13 +27,12 @@ public class Robot extends TimedRobot
     // Robot member definitions
     TRCGyroBase gyro;
     TRCEncoderSet encoders;
-    TRCMecanumDrive drive;
+    Drive drive;
     TRCDirectionalSystem lift, grabber, arm;
     TRCPneumaticSystem pokie;
     AnalogInput leftProx, rightProx;
     DigitalInput liftBottom;
     int positionOptionID, targetOptionID;
-    TRCSpeed xS, yS, zS;
 
 
     /**
@@ -66,7 +61,7 @@ public class Robot extends TimedRobot
 
 
         // Setup: Systems: Drivetrain
-        drive = new TRCMecanumDrive(Constants.DRIVE_WHEEL_PORTS, Constants.DRIVE_WHEEL_TYPES, Constants.DRIVE_WHEEL_INVERTS, true);
+        drive = new Drive(Constants.DRIVE_WHEEL_PORTS, Constants.DRIVE_WHEEL_TYPES, Constants.DRIVE_WHEEL_INVERTS, true);
  
         // Setup: Systems: Directional
         lift    = new Lift(Constants.LIFT_MOTORS, Constants.LIFT_MOTOR_TYPES);
@@ -79,7 +74,6 @@ public class Robot extends TimedRobot
         TRCPneumaticSystem.setupPneumatics(Constants.PNEUMATICS_PCM_ID);
         pokie = new TRCPneumaticSystem(Constants.POKIE_PORTS, true);
         TRCPneumaticSystemAction.registerSystem("Pokie", pokie);
-
 
         // Setup: Systems: Sensors
         gyro = new TRCGyroBase(GyroType.NavX);
@@ -124,9 +118,12 @@ public class Robot extends TimedRobot
         TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_UP_BUTTON, arm::driveReverse);
         TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_DOWN_BUTTON, arm::driveForward);
         TRCDriveInput.bindButtonAbsence(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_BUTTONS, arm::fullStop);
-
+        
         // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, 10, AutoAlign::alignWithFloorTape);
-        xS = new TRCSpeed(); yS = new TRCSpeed(); zS = new TRCSpeed();
+
+        // Setup: Input: Button Bindings: Driver Functions
+        TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_SLOW, drive::setSlowOn);
+        TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_BUTTONS, drive::setSlowOff);
     }
 
     /**
@@ -157,13 +154,6 @@ public class Robot extends TimedRobot
         // Nothing to do here ¯\_(ツ)_/¯
     }
 
-    double justify(double womp)
-    {
-        if (Math.abs(womp) < 0.1) { womp = 0.0; }
-        if (womp < 0.0) { return -(womp * womp); }
-        else { return womp * womp; }
-    }
-
     /**
      * Code here will run continously during teleop
      */
@@ -179,38 +169,6 @@ public class Robot extends TimedRobot
         TRCDriveInput.checkButtonBindings();
         // And drive the robot
         TRCDriveParams input = TRCDriveInput.getStickDriveParams(Constants.INPUT_DRIVER_PORT);
-        double x = input.getRawX();
-        double z = input.getRawZ();
-        double y = input.getRawY();
-        input.setRawY(yS.calculateSpeed(-justify(y)));
-        input.setRawX(xS.calculateSpeed(-justify(x)));
-        input.setRawZ(zS.calculateSpeed(justify(z)));
-
-        TRCController d = TRCDriveInput.getController(Constants.INPUT_DRIVER_PORT);
-        double m = 0.0;
-        if (Constants.INPUT_TYPES[Constants.INPUT_DRIVER_PORT] == ControllerType.Xbox360) { m = (1.0 - TRCDriveInput.getRawThrottle(Constants.INPUT_DRIVER_PORT)); }
-        else { m = TRCDriveInput.getThrottle(Constants.INPUT_DRIVER_PORT); }
-
-        int slowButton = 0; // What button to use to set the robot into slow (half power) mode for making smaller movements
-        if (Constants.INPUT_TYPES[Constants.INPUT_DRIVER_PORT] == ControllerType.Xbox360)
-        {
-            slowButton = 5; // Left Bumper
-        }
-        else
-        {
-            slowButton = 2; // Thumb Button
-        }
-
-        if (!d.getButton(slowButton))
-        {
-            input.setM(m);
-        }
-        else
-        {
-            input.setM(m / 2);
-        }
-
-
         drive.driveCartesian(input);
 
         TRCNetworkData.updateDataPoint("Encoder Output", encoders.getAverageDistanceTraveled(DirectionType.ForwardBackward));
