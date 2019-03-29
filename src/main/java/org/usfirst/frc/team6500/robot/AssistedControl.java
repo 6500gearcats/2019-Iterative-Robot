@@ -1,7 +1,7 @@
 package org.usfirst.frc.team6500.robot;
 
-
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.usfirst.frc.team6500.trc.auto.TRCDriveContinuous;
 import org.usfirst.frc.team6500.trc.auto.TRCDriveSync;
@@ -68,6 +68,7 @@ public class AssistedControl
     private static void read() 
     {
         TRCDriveSync.requestChangeState(DriveSyncState.DriveContinuous);
+        TRCDriveContinuous.startDriveContinuous(DriveContinuousActionType.Forward);
         while (true)
         {
             if (!isReading.get()) { continue; }
@@ -75,6 +76,7 @@ public class AssistedControl
             int action = requestAction();
             DriveContinuousActionType actionType = DriveContinuousActionType.values()[action];
             System.out.println("Number " + action);
+            TRCDriveContinuous.setDriveContinuousActionType(actionType);
             try
             {
                 Thread.sleep(1000);

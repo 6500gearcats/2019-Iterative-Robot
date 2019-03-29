@@ -1,6 +1,5 @@
 package org.usfirst.frc.team6500.robot;
 
-
 import org.usfirst.frc.team6500.robot.Constants;
 import org.usfirst.frc.team6500.trc.auto.TRCDirectionalSystemAction;
 import org.usfirst.frc.team6500.trc.auto.TRCDrivePID;
@@ -21,11 +20,11 @@ import org.usfirst.frc.team6500.trc.wrappers.sensors.TRCGyroBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.RobotBase;
 
-
-public class Robot extends TimedRobot
-{
+public class Robot extends TimedRobot {
     // Robot member definitions
     TRCGyroBase gyro;
     TRCEncoderSet encoders;
@@ -36,13 +35,11 @@ public class Robot extends TimedRobot
     DigitalInput liftBottom;
     int positionOptionID, targetOptionID;
 
-
     /**
      * Code here will run once as soon as the robot starts
      */
     @Override
-    public void robotInit()
-    {
+    public void robotInit() {
         // Setup: Communications
         TRCNetworkData.initializeNetworkData(DataInterfaceType.Board);
         TRCNetworkData.createDataPoint("Encoder Output");
@@ -61,15 +58,15 @@ public class Robot extends TimedRobot
 
         TRCNetworkData.createDataPoint("Arm Encoder");
 
-
         // Setup: Systems: Drivetrain
-        drive = new Drive(Constants.DRIVE_WHEEL_PORTS, Constants.DRIVE_WHEEL_TYPES, Constants.DRIVE_WHEEL_INVERTS, true);
+        drive = new Drive(Constants.DRIVE_WHEEL_PORTS, Constants.DRIVE_WHEEL_TYPES, Constants.DRIVE_WHEEL_INVERTS,
+                true);
         TRCDriveSync.initializeTRCDriveSync();
- 
+
         // Setup: Systems: Directional
-        lift    = new Lift(Constants.LIFT_MOTORS, Constants.LIFT_MOTOR_TYPES);
+        lift = new Lift(Constants.LIFT_MOTORS, Constants.LIFT_MOTOR_TYPES);
         grabber = new Grabber(Constants.GRABBER_MOTORS, Constants.GRABBER_MOTOR_TYPES);
-        arm     = new Arm(Constants.ARM_MOTORS, Constants.ARM_MOTOR_TYPES);
+        arm = new Arm(Constants.ARM_MOTORS, Constants.ARM_MOTOR_TYPES);
         TRCDirectionalSystemAction.registerSystem("Lift", lift);
         TRCDirectionalSystemAction.registerSystem("Grabber", grabber);
         TRCDirectionalSystemAction.registerSystem("Arm", arm);
@@ -80,14 +77,14 @@ public class Robot extends TimedRobot
 
         // Setup: Systems: Sensors
         gyro = new TRCGyroBase(GyroType.NavX);
-        encoders = new TRCEncoderSet(Constants.ENCODER_INPUTS, Constants.ENCODER_DISTANCES_PER_PULSE, false, 4, Constants.ENCODER_TYPES);
+        encoders = new TRCEncoderSet(Constants.ENCODER_INPUTS, Constants.ENCODER_DISTANCES_PER_PULSE, false, 4,
+                Constants.ENCODER_TYPES);
         encoders.resetAllEncoders();
-        leftProx  = new AnalogInput(Constants.PROXIMITY_LEFT);
+        leftProx = new AnalogInput(Constants.PROXIMITY_LEFT);
         rightProx = new AnalogInput(Constants.PROXIMITY_RIGHT);
 
         liftBottom = new DigitalInput(Constants.LIFT_BOTTOM_SWITCH);
         AssistedControl.initializeAssistedControl(8);
-
 
         // Setup: Autonomous
         TRCDrivePID.initializeTRCDrivePID(encoders, gyro, drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
@@ -95,39 +92,57 @@ public class Robot extends TimedRobot
         TRCDriveContinuous.initializeTRCDriveContinuous(drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
         TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
 
-
         // Setup: Input
-        TRCDriveInput.initializeDriveInput(Constants.INPUT_PORTS, Constants.INPUT_TYPES, Constants.SPEED_BASE, Constants.SPEED_BOOST);
+        TRCDriveInput.initializeDriveInput(Constants.INPUT_PORTS, Constants.INPUT_TYPES, Constants.SPEED_BASE,
+                Constants.SPEED_BOOST);
 
         // Setup: Input: Button Bindings: Autonomous Functions
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON, AssistedControl::startCommunications);
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON, AssistedControl::pauseCommunications);
-        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_GET_PANEL, AutoProcess::obtainPanel);
-        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_GET_CARGO, AutoProcess::obtainCargo);
-        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L1_PANEL, AutoProcess::levelOnePanel);
-        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L2_PANEL, AutoProcess::levelTwoPanel);
-        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L3_PANEL, AutoProcess::levelThreePanel);
-        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L1_CARGO, AutoProcess::levelOneCargo);
-        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L2_CARGO, AutoProcess::levelTwoCargo);
-        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L3_CARGO, AutoProcess::levelThreeCargo);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
+                AssistedControl::startCommunications);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
+                AssistedControl::pauseCommunications);
+        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
+        // Constants.INPUT_AUTO_GET_PANEL, AutoProcess::obtainPanel);
+        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
+        // Constants.INPUT_AUTO_GET_CARGO, AutoProcess::obtainCargo);
+        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
+        // Constants.INPUT_AUTO_L1_PANEL, AutoProcess::levelOnePanel);
+        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
+        // Constants.INPUT_AUTO_L2_PANEL, AutoProcess::levelTwoPanel);
+        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
+        // Constants.INPUT_AUTO_L3_PANEL, AutoProcess::levelThreePanel);
+        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
+        // Constants.INPUT_AUTO_L1_CARGO, AutoProcess::levelOneCargo);
+        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
+        // Constants.INPUT_AUTO_L2_CARGO, AutoProcess::levelTwoCargo);
+        // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
+        // Constants.INPUT_AUTO_L3_CARGO, AutoProcess::levelThreeCargo);
 
         // Setup: Input: Button Bindings: Gunner Functions
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_LIFT_ELEVATE_BUTTON, lift::driveForward);
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_LIFT_DESCEND_BUTTON, lift::driveReverse);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_LIFT_ELEVATE_BUTTON,
+                lift::driveForward);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_LIFT_DESCEND_BUTTON,
+                lift::driveReverse);
         TRCDriveInput.bindButtonAbsence(Constants.INPUT_GUNNER_PORT, Constants.INPUT_LIFT_BUTTONS, lift::fullStop);
 
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_POKIE_EXTEND_BUTTON, pokie::fullOpen);
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_POKIE_RETRACT_BUTTON, pokie::fullClose);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_POKIE_EXTEND_BUTTON,
+                pokie::fullOpen);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_POKIE_RETRACT_BUTTON,
+                pokie::fullClose);
 
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_GRABBER_INTAKE_BUTTON, grabber::driveForward);
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_GRABBER_EXPEL_BUTTON, grabber::driveReverse);
-        TRCDriveInput.bindButtonAbsence(Constants.INPUT_GUNNER_PORT, Constants.INPUT_GRABBER_BUTTONS, grabber::fullStop);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_GRABBER_INTAKE_BUTTON,
+                grabber::driveForward);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_GRABBER_EXPEL_BUTTON,
+                grabber::driveReverse);
+        TRCDriveInput.bindButtonAbsence(Constants.INPUT_GUNNER_PORT, Constants.INPUT_GRABBER_BUTTONS,
+                grabber::fullStop);
 
         TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_UP_BUTTON, arm::driveReverse);
         TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_DOWN_BUTTON, arm::driveForward);
         TRCDriveInput.bindButtonAbsence(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_BUTTONS, arm::fullStop);
-        
-        // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, 10, AutoAlign::alignWithFloorTape);
+
+        // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, 10,
+        // AutoAlign::alignWithFloorTape);
 
         // Setup: Input: Button Bindings: Driver Functions
         TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_SLOW, drive::setSlowOn);
@@ -142,6 +157,7 @@ public class Robot extends TimedRobot
     {
         encoders.resetAllEncoders();
         gyro.reset();
+        AssistedControl.startCommunications();
     }
 
     /**
@@ -150,7 +166,7 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic()
     {
-        driveRobot();
+        // driveRobot();
     }
 
     /**
@@ -159,6 +175,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
+    
         // Nothing to do here ¯\_(ツ)_/¯
     }
 
@@ -198,8 +215,9 @@ public class Robot extends TimedRobot
         TRCNetworkData.updateDataPoint("Switch", liftBottom.get());
     }
 
-    public static void main(String... args)
+    public static void main(String... args) throws InterruptedException
     {
         RobotBase.startRobot(Robot::new);
+        // request data from the Arduin
     }
 }
