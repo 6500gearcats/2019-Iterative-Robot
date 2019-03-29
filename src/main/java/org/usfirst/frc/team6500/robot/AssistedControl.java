@@ -74,7 +74,14 @@ public class AssistedControl
             if (!isReading.get()) { continue; }
 
             int action = requestAction();
-            DriveContinuousActionType actionType = DriveContinuousActionType.values()[action];
+            if (action > -1 && action < 14)
+            {
+               DriveContinuousActionType actionType = DriveContinuousActionType.values()[action];
+            }
+            else
+            {
+                DriveContinuousActionType actionType = DriveContinuousActionType.values()[0];
+            }
             System.out.println("Number " + action);
             TRCDriveContinuous.setDriveContinuousActionType(actionType);
             try
