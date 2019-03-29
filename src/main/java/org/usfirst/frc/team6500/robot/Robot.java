@@ -4,6 +4,8 @@ package org.usfirst.frc.team6500.robot;
 import org.usfirst.frc.team6500.robot.Constants;
 import org.usfirst.frc.team6500.trc.auto.TRCDirectionalSystemAction;
 import org.usfirst.frc.team6500.trc.auto.TRCDrivePID;
+import org.usfirst.frc.team6500.trc.auto.TRCDriveContinuous;
+import org.usfirst.frc.team6500.trc.auto.TRCDriveSync;
 import org.usfirst.frc.team6500.trc.auto.TRCPneumaticSystemAction;
 import org.usfirst.frc.team6500.trc.sensors.TRCCamera;
 import org.usfirst.frc.team6500.trc.sensors.TRCNetworkVision;
@@ -33,6 +35,7 @@ public class Robot extends TimedRobot
     AnalogInput leftProx, rightProx;
     DigitalInput liftBottom;
     int positionOptionID, targetOptionID;
+    AssistedControl arduino;
 
 
     /**
@@ -62,6 +65,7 @@ public class Robot extends TimedRobot
 
         // Setup: Systems: Drivetrain
         drive = new Drive(Constants.DRIVE_WHEEL_PORTS, Constants.DRIVE_WHEEL_TYPES, Constants.DRIVE_WHEEL_INVERTS, true);
+        TRCDriveSync.initializeTRCDriveSync();
  
         // Setup: Systems: Directional
         lift    = new Lift(Constants.LIFT_MOTORS, Constants.LIFT_MOTOR_TYPES);
@@ -83,17 +87,22 @@ public class Robot extends TimedRobot
         rightProx = new AnalogInput(Constants.PROXIMITY_RIGHT);
 
         liftBottom = new DigitalInput(Constants.LIFT_BOTTOM_SWITCH);
+        arduino = new AssistedControl(8);
 
 
         // Setup: Autonomous
         TRCDrivePID.initializeTRCDrivePID(encoders, gyro, drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
         AutoAlign.setupAlignment(drive, leftProx, rightProx);
+        TRCDriveContinuous.initializeTRCDriveContinuous(drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
+        TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
 
 
         // Setup: Input
         TRCDriveInput.initializeDriveInput(Constants.INPUT_PORTS, Constants.INPUT_TYPES, Constants.SPEED_BASE, Constants.SPEED_BOOST);
 
         // Setup: Input: Button Bindings: Autonomous Functions
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON, arduino::startCommunications);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON, arduino::pauseCommunications);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_GET_PANEL, AutoProcess::obtainPanel);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_GET_CARGO, AutoProcess::obtainCargo);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L1_PANEL, AutoProcess::levelOnePanel);
@@ -165,11 +174,19 @@ public class Robot extends TimedRobot
 
     public void driveRobot()
     {
+        // TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
         // Check all inputs
         TRCDriveInput.checkButtonBindings();
         // And drive the robot
         TRCDriveParams input = TRCDriveInput.getStickDriveParams(Constants.INPUT_DRIVER_PORT);
-        drive.driveCartesian(input);
+        try
+        {
+            drive.driveCartesian(input);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
 
         TRCNetworkData.updateDataPoint("Encoder Output", encoders.getAverageDistanceTraveled(DirectionType.ForwardBackward));
         TRCNetworkData.updateDataPoint("Encoder 0", encoders.getIndividualDistanceTraveled(0));
