@@ -10,51 +10,67 @@ import org.usfirst.frc.team6500.trc.util.TRCTypes.*;
 import edu.wpi.first.wpilibj.I2C;
 
 
-public class AssistedControl extends I2C 
+public class AssistedControl 
 {
-    private Thread readThread;
-    private AtomicBoolean isReading = new AtomicBoolean(false);
+    private static Thread readThread;
+    private static I2C i2c;
 
-    AssistedControl(int address) 
+    private static AtomicInteger x0;
+    private static AtomicInteger y0;
+    private static AtomicInteger x1;
+    private static AtomicInteger y1;
+    private static AtomicBoolean isReading = new AtomicBoolean(false);
+
+    public static void initializeAssistedControl(int address) 
     {
-        super(I2C.Port.kOnboard, address);
+        i2c = new I2C(I2C.Port.kOnboard, address);
     }
 
-    public void startCommunications() 
+    public static void startCommunications() 
     {
         if (readThread != null) { resumeCommunications(); }
 
-        readThread = new Thread(this::read);
+        readThread = new Thread(AssistedControl::read);
         readThread.setName("Assisted Control Thread");
         readThread.start();
         isReading.set(true);
     }
 
-    public void resumeCommunications() 
+    public static void resumeCommunications() 
     {
-        this.isReading.set(true);
+        isReading.set(true);
     }
 
-    public void pauseCommunications() 
+    public static void pauseCommunications() 
     {
-        this.isReading.set(false);
+        isReading.set(false);
     }
 
-    private int requestAction() 
+    private static int requestAction() 
     {
+        // ByteBuffer buffer = ByteBuffer.allocate(4);
+    		
+        // i2C.read(8, 4, buffer);
+        // int[] values = buffer.asIntBuffer().array();
+        //Only using x0 in the above code, may want to cut out rest. I left them in just in case.
+        // x0.set(values[0]);
+        // y0.set(values[1]);
+        // x1.set(values[2]);
+        // y1.set(values[3]);
+
         byte[] input = new byte[1];
-        boolean noConnection = readOnly(input, 1);
+        boolean noConnection = i2c.readOnly(input, 1);
         if (noConnection)
             return -2;
         return (int) input[0];
     }
 
-    private void read() 
+    private static void read() 
     {
         TRCDriveSync.requestChangeState(DriveSyncState.DriveContinuous);
         while (true)
         {
-            if (!this.isReading.get()) { continue; }
+            if (!isReading.get()) { continue; }
 
             int action = requestAction();
             DriveContinuousActionType actionType = DriveContinuousActionType.values()[action];

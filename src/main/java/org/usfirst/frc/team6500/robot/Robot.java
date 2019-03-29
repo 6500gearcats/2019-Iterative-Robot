@@ -35,7 +35,6 @@ public class Robot extends TimedRobot
     AnalogInput leftProx, rightProx;
     DigitalInput liftBottom;
     int positionOptionID, targetOptionID;
-    AssistedControl arduino;
 
 
     /**
@@ -87,7 +86,7 @@ public class Robot extends TimedRobot
         rightProx = new AnalogInput(Constants.PROXIMITY_RIGHT);
 
         liftBottom = new DigitalInput(Constants.LIFT_BOTTOM_SWITCH);
-        arduino = new AssistedControl(8);
+        AssistedControl.initializeAssistedControl(8);
 
 
         // Setup: Autonomous
@@ -101,8 +100,8 @@ public class Robot extends TimedRobot
         TRCDriveInput.initializeDriveInput(Constants.INPUT_PORTS, Constants.INPUT_TYPES, Constants.SPEED_BASE, Constants.SPEED_BOOST);
 
         // Setup: Input: Button Bindings: Autonomous Functions
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON, arduino::startCommunications);
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON, arduino::pauseCommunications);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON, AssistedControl::startCommunications);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON, AssistedControl::pauseCommunications);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_GET_PANEL, AutoProcess::obtainPanel);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_GET_CARGO, AutoProcess::obtainCargo);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_L1_PANEL, AutoProcess::levelOnePanel);
