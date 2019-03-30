@@ -99,7 +99,7 @@ public class Arm extends TRCDirectionalSystem
         if (checkOverdistance(armTalon)) { return; }
 
         armTalon.enableCurrentLimit(false);
-        armTalon.set(ControlMode.PercentOutput, 0.0);
+        //armTalon.set(ControlMode.PercentOutput, 0.0);
 
         super.driveForward();
     }
@@ -111,7 +111,7 @@ public class Arm extends TRCDirectionalSystem
         if (checkOverdistance(armTalon)) { return; }
 
         armTalon.enableCurrentLimit(false);
-        armTalon.set(ControlMode.PercentOutput, 0.0);
+        //armTalon.set(ControlMode.PercentOutput, 0.0);
 
         super.driveReverse();
     }

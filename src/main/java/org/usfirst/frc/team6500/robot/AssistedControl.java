@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.usfirst.frc.team6500.trc.auto.TRCDriveContinuous;
 import org.usfirst.frc.team6500.trc.auto.TRCDriveSync;
+import org.usfirst.frc.team6500.trc.util.TRCNetworkData;
 import org.usfirst.frc.team6500.trc.util.TRCTypes.*;
 
 import edu.wpi.first.wpilibj.I2C;
@@ -46,7 +47,7 @@ public class AssistedControl
         isReading.set(false);
     }
 
-    private static int requestAction() 
+    private static int[] requestData() 
     {
         // ByteBuffer buffer = ByteBuffer.allocate(4);
     		
@@ -60,9 +61,17 @@ public class AssistedControl
 
         byte[] input = new byte[1];
         boolean noConnection = i2c.readOnly(input, 1);
+
+        int[] intInput = new int[1];
         if (noConnection)
-            return -2;
-        return (int) input[0];
+        { intInput[0] = -2; }// intInput[1] = 0; intInput[2] = 0; }
+        else
+        {
+            intInput[0] = (int) input[0];
+            // intInput[1] = (int) input[1];
+            // intInput[2] = (int) input[2];
+        }
+        return intInput;
     }
 
     private static void read() 
@@ -71,23 +80,45 @@ public class AssistedControl
         TRCDriveContinuous.startDriveContinuous(DriveContinuousActionType.Forward);
         while (true)
         {
-            if (!isReading.get()) { continue; }
+            int[] recvData = requestData();
+            int actionID = recvData[0];
+            recvData = requestData();
+            boolean lineVisible = recvData[0] == 1;
+            //System.out.println(actionID + " " + lineVisible);
+            TRCNetworkData.updateDataPoint("LFC", actionID);
+            TRCNetworkData.updateDataPoint("Line Visible?", lineVisible);
 
-            int action = requestAction();
-            DriveContinuousActionType actionType = DriveContinuousActionType.values()[DriveContinuousActionType.CurveLeft.ordinal()];
-            // if (action > -1 && action < 14)
-            // {
-            //    actionType = DriveContinuousActionType.values()[action];
-            // }
-            System.out.println("Number " + action);
-            TRCDriveContinuous.setDriveContinuousActionType(actionType);
             try
             {
-                Thread.sleep(50);
+                Thread.sleep(100);
             }
             catch (InterruptedException e)
             {
                 e.printStackTrace();
+            }
+
+            if (!lineVisible) { continue; }
+            if (!isReading.get()) { continue; }
+
+            try
+            {
+                TRCDriveSync.assertDriveContinuous();
+
+                DriveContinuousActionType actionType = DriveContinuousActionType.values()[0];
+                try
+                {
+                    actionType = DriveContinuousActionType.values()[actionID];
+                }
+                catch (Exception e)
+                {
+                    //System.out.println(e);
+                }
+
+                TRCDriveContinuous.setDriveContinuousActionType(actionType);
+            }
+            catch (AssertionError e)
+            {
+                // System.out.println(e);
             }
         }
     }

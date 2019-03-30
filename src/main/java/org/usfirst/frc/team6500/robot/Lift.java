@@ -20,7 +20,7 @@ public class Lift extends TRCDirectionalSystem
         TalonSRX liftRight = new TalonSRX((Integer) this.outputMotors.keySet().toArray()[0]);
 
         liftRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
-        liftRight.setSensorPhase(false);
+        liftRight.setSensorPhase(true);
         liftLeft.follow(liftRight);
 
         liftRight.configNominalOutputForward(0.0, 30);
@@ -87,7 +87,7 @@ public class Lift extends TRCDirectionalSystem
 
         while (liftRight.getSelectedSensorPosition() - liftRight.getClosedLoopTarget() < 50)
         {
-            
+            super.driveForward();
         }
     }
 }

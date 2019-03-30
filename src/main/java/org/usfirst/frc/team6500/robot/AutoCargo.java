@@ -24,8 +24,11 @@ public class AutoCargo implements TRCAutoRoute
     private double rotation1 = -90.0;
     private TRCEncoderSet encoders;
     private AnalogInput leftProximity, rightProximity;
+    private Lift lift;
+    private Arm arm;
+    private Grabber grabber;
 
-    public AutoCargo(CargoPositionType cargoPos, boolean left, TRCEncoderSet encoderSet, AnalogInput leftProx, AnalogInput rightProx)
+    public AutoCargo(CargoPositionType cargoPos, boolean left, TRCEncoderSet encoderSet, AnalogInput leftProx, AnalogInput rightProx, Lift nlift, Arm narm, Grabber ngrabber)
     {
         if (cargoPos == CargoPositionType.Middle)
         {
@@ -41,6 +44,10 @@ public class AutoCargo implements TRCAutoRoute
         encoders = encoderSet;
         leftProximity = leftProx;
         rightProximity = rightProx;
+
+        lift = nlift;
+        arm = narm;
+        grabber = ngrabber;
     }
 
     @Override
@@ -56,12 +63,13 @@ public class AutoCargo implements TRCAutoRoute
         encoders.resetAllEncoders();
         TRCDrivePID.run(DriveActionType.Forward, inches2);
 
-        (new TRCDirectionalSystemAction("Lift", DirectionalSystemActionType.Forward, Constants.LIFT_TIME_CARGO, true)).start();
-        (new TRCDirectionalSystemAction("Grabber", DirectionalSystemActionType.Reverse, Constants.GRABBER_TIME_CARGO, true)).start();
         TRCDrivePID.run(DriveActionType.Rotate, rotation1);
         
         TRCDriveSync.requestChangeState(DriveSyncState.DriveContinuous);
         AssistedControl.startCommunications();
+
+        lift.liftToLevel(1);
+        arm.armToHatch();
 
         boolean running = true;
         while(running)

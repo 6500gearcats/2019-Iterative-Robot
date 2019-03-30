@@ -34,6 +34,8 @@ public class Constants
 
     public static final int INPUT_AUTO_LINE_BUTTON      = 12;
     public static final int INPUT_AUTO_KILL_BUTTON      = 11;
+    public static final int INPUT_ARM_HATCH_BUTTON      = 10;
+    public static final int INPUT_ARM_EASE_BUTTON       = 9;
     // public static final int INPUT_AUTO_GET_PANEL      = 3;
     // public static final int INPUT_AUTO_GET_CARGO      = 4;
     // public static final int INPUT_AUTO_L1_PANEL       = 11;
@@ -72,7 +74,7 @@ public class Constants
     public final static double LIFT_SPEED_DOWN                    = 0.3;
     public final static int LIFT_SWITCH_PORTS[]                   = {0, 1, 2, 3, 4};
     public final static int LIFT_MAX_STALL_CURRENT                = 5;
-    public final static double LIFT_TARGET_HEIGHTS[]              = {0, -7000, -14000, -19000, -22500, -0};
+    public final static double LIFT_TARGET_HEIGHTS[]              = {0, 14000};
     public final static int LIFT_BOTTOM_SWITCH                    = 9;
     public final static double LIFT_TIME_CARGO                    = 1.25;
     

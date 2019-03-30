@@ -45,21 +45,15 @@ public class Robot extends TimedRobot {
         // Setup: Communications
         TRCNetworkData.initializeNetworkData(DataInterfaceType.Board);
         TRCNetworkData.createDataPoint("Encoder Output");
-        TRCNetworkData.createDataPoint("Encoder 0");
-        TRCNetworkData.createDataPoint("Encoder 1");
-        TRCNetworkData.createDataPoint("Encoder 2");
-        TRCNetworkData.createDataPoint("Encoder 3");
         TRCNetworkData.createDataPoint("Gyro");
         TRCNetworkData.createDataPoint("Switch");
         TRCNetworkData.createDataPoint("Arm");
+        TRCNetworkData.createDataPoint("LFC");
+        TRCNetworkData.createDataPoint("Line Visible?");
         TRCNetworkData.createDataPoint("Left Proximity");
         TRCNetworkData.createDataPoint("Right Proximity");
-        TRCNetworkData.createDataPoint("vision/mode");
-        TRCNetworkData.updateDataPoint("vision/mode", "None");
         TRCNetworkVision.initializeVision();
         TRCCamera.initializeCamera();
-
-        TRCNetworkData.createDataPoint("Arm Encoder");
 
         // Setup: Systems: Drivetrain
         drive = new Drive(Constants.DRIVE_WHEEL_PORTS, Constants.DRIVE_WHEEL_TYPES, Constants.DRIVE_WHEEL_INVERTS,
@@ -87,13 +81,16 @@ public class Robot extends TimedRobot {
         rightProx = new AnalogInput(Constants.PROXIMITY_RIGHT);
 
         liftBottom = new DigitalInput(Constants.LIFT_BOTTOM_SWITCH);
-        AssistedControl.initializeAssistedControl(8);
 
         // Setup: Autonomous
         TRCDrivePID.initializeTRCDrivePID(encoders, gyro, drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
         AutoAlign.setupAlignment(drive, leftProx, rightProx);
         TRCDriveContinuous.initializeTRCDriveContinuous(drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
         TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
+
+        AssistedControl.initializeAssistedControl(8);
+        AssistedControl.startCommunications();
+        AssistedControl.pauseCommunications();
 
         // Setup: Input
         TRCDriveInput.initializeDriveInput(Constants.INPUT_PORTS, Constants.INPUT_TYPES, Constants.SPEED_BASE,
@@ -105,8 +102,12 @@ public class Robot extends TimedRobot {
         //TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
         //        AssistedControl::pauseCommunications);
         TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
-                arm::armToHatch);
+                AssistedControl::startCommunications);
         TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
+                AssistedControl::pauseCommunications);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_HATCH_BUTTON,
+                arm::armToHatch);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_EASE_BUTTON,
                 arm::atEasePrivateArm);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
         // Constants.INPUT_AUTO_GET_PANEL, AutoProcess::obtainPanel);
@@ -165,8 +166,8 @@ public class Robot extends TimedRobot {
         encoders.resetAllEncoders();
         gyro.reset();
         //AssistedControl.startCommunications();
-        AutoCargo cargo = new AutoCargo(CargoPositionType.Close, false, encoders, leftProx, rightProx);
-        cargo.run();
+        //AutoCargo cargo = new AutoCargo(CargoPositionType.Close, false, encoders, leftProx, rightProx);
+        //cargo.run();
     }
 
     /**
@@ -175,7 +176,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic()
     {
-        // driveRobot();
+        driveRobot();
     }
 
     /**
@@ -199,31 +200,26 @@ public class Robot extends TimedRobot {
 
     public void driveRobot()
     {
-        // TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
+        TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
         // Check all inputs
         TRCDriveInput.checkButtonBindings();
         // And drive the robot
         TRCDriveParams input = TRCDriveInput.getStickDriveParams(Constants.INPUT_DRIVER_PORT);
         try
         {
-            TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
+            TRCDriveSync.assertTeleop();
             drive.driveCartesian(input);
         }
-        catch (Exception e)
+        catch (AssertionError e)
         {
-            System.out.println(e);
+            // System.out.println(e);
         }
 
         TRCNetworkData.updateDataPoint("Encoder Output", encoders.getAverageDistanceTraveled(DirectionType.ForwardBackward));
-        TRCNetworkData.updateDataPoint("Encoder 0", encoders.getIndividualDistanceTraveled(0));
-        TRCNetworkData.updateDataPoint("Encoder 1", encoders.getIndividualDistanceTraveled(1));
-        TRCNetworkData.updateDataPoint("Encoder 2", encoders.getIndividualDistanceTraveled(2));
-        TRCNetworkData.updateDataPoint("Encoder 3", encoders.getIndividualDistanceTraveled(3));
         TRCNetworkData.updateDataPoint("Gyro", gyro.getAngle());
         TRCNetworkData.updateDataPoint("Arm", arm.getArmPos());
         TRCNetworkData.updateDataPoint("Left Proximity", AutoAlign.calculateUltrasonicDistance(leftProx.getVoltage()));
         TRCNetworkData.updateDataPoint("Right Proximity", AutoAlign.calculateUltrasonicDistance(rightProx.getVoltage()));
-        TRCNetworkData.updateDataPoint("Switch", liftBottom.get());
     }
 
     public static void main(String... args) throws InterruptedException
