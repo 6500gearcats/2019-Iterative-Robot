@@ -74,19 +74,16 @@ public class AssistedControl
             if (!isReading.get()) { continue; }
 
             int action = requestAction();
-            if (action > -1 && action < 14)
-            {
-               DriveContinuousActionType actionType = DriveContinuousActionType.values()[action];
-            }
-            else
-            {
-                DriveContinuousActionType actionType = DriveContinuousActionType.values()[0];
-            }
+            DriveContinuousActionType actionType = DriveContinuousActionType.values()[DriveContinuousActionType.CurveLeft.ordinal()];
+            // if (action > -1 && action < 14)
+            // {
+            //    actionType = DriveContinuousActionType.values()[action];
+            // }
             System.out.println("Number " + action);
             TRCDriveContinuous.setDriveContinuousActionType(actionType);
             try
             {
-                Thread.sleep(1000);
+                Thread.sleep(50);
             }
             catch (InterruptedException e)
             {

@@ -1,6 +1,7 @@
 package org.usfirst.frc.team6500.robot;
 
 import org.usfirst.frc.team6500.robot.Constants;
+import org.usfirst.frc.team6500.robot.Constants.CargoPositionType;
 import org.usfirst.frc.team6500.trc.auto.TRCDirectionalSystemAction;
 import org.usfirst.frc.team6500.trc.auto.TRCDrivePID;
 import org.usfirst.frc.team6500.trc.auto.TRCDriveContinuous;
@@ -29,7 +30,8 @@ public class Robot extends TimedRobot {
     TRCGyroBase gyro;
     TRCEncoderSet encoders;
     Drive drive;
-    TRCDirectionalSystem lift, grabber, arm;
+    TRCDirectionalSystem lift, grabber;
+    Arm arm;
     TRCPneumaticSystem pokie;
     AnalogInput leftProx, rightProx;
     DigitalInput liftBottom;
@@ -49,6 +51,7 @@ public class Robot extends TimedRobot {
         TRCNetworkData.createDataPoint("Encoder 3");
         TRCNetworkData.createDataPoint("Gyro");
         TRCNetworkData.createDataPoint("Switch");
+        TRCNetworkData.createDataPoint("Arm");
         TRCNetworkData.createDataPoint("Left Proximity");
         TRCNetworkData.createDataPoint("Right Proximity");
         TRCNetworkData.createDataPoint("vision/mode");
@@ -76,7 +79,7 @@ public class Robot extends TimedRobot {
         TRCPneumaticSystemAction.registerSystem("Pokie", pokie);
 
         // Setup: Systems: Sensors
-        gyro = new TRCGyroBase(GyroType.NavX);
+        gyro = new TRCGyroBase(GyroType.ADXRS450);
         encoders = new TRCEncoderSet(Constants.ENCODER_INPUTS, Constants.ENCODER_DISTANCES_PER_PULSE, false, 4,
                 Constants.ENCODER_TYPES);
         encoders.resetAllEncoders();
@@ -97,10 +100,14 @@ public class Robot extends TimedRobot {
                 Constants.SPEED_BOOST);
 
         // Setup: Input: Button Bindings: Autonomous Functions
+        //TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
+        //        AssistedControl::startCommunications);
+        //TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
+        //        AssistedControl::pauseCommunications);
         TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
-                AssistedControl::startCommunications);
+                arm::armToHatch);
         TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
-                AssistedControl::pauseCommunications);
+                arm::atEasePrivateArm);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
         // Constants.INPUT_AUTO_GET_PANEL, AutoProcess::obtainPanel);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
@@ -157,7 +164,9 @@ public class Robot extends TimedRobot {
     {
         encoders.resetAllEncoders();
         gyro.reset();
-        AssistedControl.startCommunications();
+        //AssistedControl.startCommunications();
+        AutoCargo cargo = new AutoCargo(CargoPositionType.Close, false, encoders, leftProx, rightProx);
+        cargo.run();
     }
 
     /**
@@ -197,6 +206,7 @@ public class Robot extends TimedRobot {
         TRCDriveParams input = TRCDriveInput.getStickDriveParams(Constants.INPUT_DRIVER_PORT);
         try
         {
+            TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
             drive.driveCartesian(input);
         }
         catch (Exception e)
@@ -210,6 +220,7 @@ public class Robot extends TimedRobot {
         TRCNetworkData.updateDataPoint("Encoder 2", encoders.getIndividualDistanceTraveled(2));
         TRCNetworkData.updateDataPoint("Encoder 3", encoders.getIndividualDistanceTraveled(3));
         TRCNetworkData.updateDataPoint("Gyro", gyro.getAngle());
+        TRCNetworkData.updateDataPoint("Arm", arm.getArmPos());
         TRCNetworkData.updateDataPoint("Left Proximity", AutoAlign.calculateUltrasonicDistance(leftProx.getVoltage()));
         TRCNetworkData.updateDataPoint("Right Proximity", AutoAlign.calculateUltrasonicDistance(rightProx.getVoltage()));
         TRCNetworkData.updateDataPoint("Switch", liftBottom.get());

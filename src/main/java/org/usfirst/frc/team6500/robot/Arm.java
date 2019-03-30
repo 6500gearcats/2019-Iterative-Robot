@@ -41,28 +41,35 @@ public class Arm extends TRCDirectionalSystem
     }
 
 
-    public void armToUp()
+    public double getArmPos()
+    {
+        TalonSRX armTalon = new TalonSRX((Integer) this.outputMotors.keySet().toArray()[0]);
+        return armTalon.getSelectedSensorPosition();
+    }
+
+
+    public void armToHatch()
     {
         if (!isReady) { return; }
 
-        encoder.reset();
-        while (encoder.getDistance() < Constants.ARM_POSITION_UP)
+        while (getArmPos() < Constants.ARM_POSITION_HATCH)
         {
-            this.driveForward();
+            this.driveReverse();
         }
 
         this.fullStop();
     }
 
-    public void armToDown()
+    public void atEasePrivateArm()
     {
         if (!isReady) { return; }
 
-        encoder.reset();
-        while (encoder.getDistance() > Constants.ARM_POSITION_DOWN)
+        while (getArmPos() > Constants.ARM_POSITION_EASE)
         {
-            this.driveReverse();
+            this.driveForward();
         }
+
+        this.fullStop();
     }
 
     public boolean checkOverdistance(WPI_TalonSRX talon)

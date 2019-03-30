@@ -55,15 +55,15 @@ public class AutoProcess
         ejectCargo.start();
     }
 
-    public static void armUp()
-    {
-        arm.armToUp();
-    }
+    // public static void armUp()
+    // {
+    //     arm.armToUp();
+    // }
 
-    public static void armDown()
-    {
-        arm.armToDown();
-    }
+    // public static void armDown()
+    // {
+    //     arm.armToDown();
+    // }
 
 
     public static void obtainPanel()

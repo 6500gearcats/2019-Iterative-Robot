@@ -47,7 +47,7 @@ public class Constants
     // Speed Constants
     public static final double SPEED_BASE              = 0.85;
     public static final double SPEED_BOOST             = 0.95;
-    public static final double SPEED_AUTO_TAPE         = 0.65;
+    public static final double SPEED_AUTO_TAPE         = 0.30;
     public static final double SPEED_AUTO_LINE         = 0.275;
     public static final double SPEED_AUTO_LINE_STRAFE  = 0.325;
     public static final double SPEED_AUTO_LINE_TURN    = 0.2;
@@ -74,6 +74,7 @@ public class Constants
     public final static int LIFT_MAX_STALL_CURRENT                = 5;
     public final static double LIFT_TARGET_HEIGHTS[]              = {0, -7000, -14000, -19000, -22500, -0};
     public final static int LIFT_BOTTOM_SWITCH                    = 9;
+    public final static double LIFT_TIME_CARGO                    = 1.25;
     
     public final static int GRABBER_MOTOR_LEFT                    = 8;
     public final static int GRABBER_MOTOR_RIGHT                   = 9;
@@ -81,6 +82,7 @@ public class Constants
     public final static SpeedControllerType GRABBER_MOTOR_TYPES[] = {SpeedControllerType.CANTalonSRX, SpeedControllerType.CANTalonSRX};
     public final static double GRABBER_SPEED_EXPEL                = 1.0;
     public final static double GRABBER_SPEED_INTAKE               = -0.5;
+    public final static double GRABBER_TIME_CARGO                 = 1.25;
 
     public final static int ARM_MOTOR                             = 7;
     public final static int ARM_MOTORS[]                          = {ARM_MOTOR};
@@ -88,6 +90,8 @@ public class Constants
     public final static double ARM_DISTANCE_PER_PULSE             = 0.0;
     public final static double ARM_POSITION_UP                    = 5500.0;
     public final static double ARM_POSITION_DOWN                  = -100.0;
+    public final static double ARM_POSITION_HATCH                 = 2000.0;
+    public final static double ARM_POSITION_EASE                  = -50.0;
     public final static double ARM_SPEED_UP                       = -0.5;
     public final static double ARM_SPEED_DOWN                     = 0.25;
     public final static int ARM_MAX_STALL_CURRENT                 = 5;
@@ -118,4 +122,12 @@ public class Constants
 
     // Pneumatics Constants
     public final static int PNEUMATICS_PCM_ID = 10;
+
+
+    public static enum CargoPositionType
+    {
+        Close,
+        Middle,
+        Far
+    }
 }
