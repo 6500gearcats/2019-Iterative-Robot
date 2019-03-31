@@ -80,14 +80,6 @@ public class AssistedControl
         TRCDriveContinuous.startDriveContinuous(DriveContinuousActionType.Forward);
         while (true)
         {
-            int[] recvData = requestData();
-            int actionID = recvData[0];
-            recvData = requestData();
-            boolean lineVisible = recvData[0] == 1;
-            //System.out.println(actionID + " " + lineVisible);
-            TRCNetworkData.updateDataPoint("LFC", actionID);
-            TRCNetworkData.updateDataPoint("Line Visible?", lineVisible);
-
             try
             {
                 Thread.sleep(100);
@@ -97,7 +89,19 @@ public class AssistedControl
                 e.printStackTrace();
             }
 
-            if (!lineVisible) { continue; }
+            int[] recvData = requestData();
+            int data = recvData[0];
+            int threshold = 16;
+            System.out.println(data);
+            //TRCNetworkData.updateDataPoint("LFC", data);
+            
+            if (data < 0) { continue; }
+
+            boolean lineVisible = false;
+            if (data >= threshold) { lineVisible = true; data -= threshold; }
+            TRCNetworkData.updateDataPoint("LFC", data);
+            TRCNetworkData.updateDataPoint("Line Visible?", lineVisible);
+
             if (!isReading.get()) { continue; }
 
             try
@@ -107,7 +111,7 @@ public class AssistedControl
                 DriveContinuousActionType actionType = DriveContinuousActionType.values()[0];
                 try
                 {
-                    actionType = DriveContinuousActionType.values()[actionID];
+                    actionType = DriveContinuousActionType.values()[data];
                 }
                 catch (Exception e)
                 {

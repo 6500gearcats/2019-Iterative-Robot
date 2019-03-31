@@ -12,15 +12,20 @@ import org.usfirst.frc.team6500.trc.util.TRCTypes.SpeedControllerType;
 
 public class Lift extends TRCDirectionalSystem
 {
+    private static TalonSRX liftLeft, liftRight;
+    private static WPI_TalonSRX wLiftLeft, wLiftRight;
+
     public Lift(int[] motorPorts, SpeedControllerType[] motorTypes)
     {
         super(motorPorts, motorTypes, false, Constants.LIFT_SPEED_UP, Constants.LIFT_SPEED_DOWN);
 
-        TalonSRX liftLeft = new TalonSRX((Integer) this.outputMotors.keySet().toArray()[1]);
-        TalonSRX liftRight = new TalonSRX((Integer) this.outputMotors.keySet().toArray()[0]);
+        liftLeft = new TalonSRX((Integer) this.outputMotors.keySet().toArray()[1]);
+        liftRight = new TalonSRX((Integer) this.outputMotors.keySet().toArray()[0]);
+        wLiftLeft = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[1]);
+        wLiftRight = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
 
         liftRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
-        liftRight.setSensorPhase(true);
+        liftRight.setSensorPhase(false);
         liftLeft.follow(liftRight);
 
         liftRight.configNominalOutputForward(0.0, 30);
@@ -38,13 +43,10 @@ public class Lift extends TRCDirectionalSystem
     @Override
     public void driveForward()
     {
-        WPI_TalonSRX liftLeft = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[1]);
-        WPI_TalonSRX liftRight = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
-
-        liftLeft.enableCurrentLimit(false);
-        liftRight.enableCurrentLimit(false);
-        liftLeft.set(ControlMode.PercentOutput, 0.0);
-        liftRight.set(ControlMode.PercentOutput, 0.0);
+        wLiftLeft.enableCurrentLimit(false);
+        wLiftRight.enableCurrentLimit(false);
+        wLiftLeft.set(ControlMode.PercentOutput, 0.0);
+        wLiftRight.set(ControlMode.PercentOutput, 0.0);
 
         super.driveForward();
     }
@@ -52,13 +54,10 @@ public class Lift extends TRCDirectionalSystem
     @Override
     public void driveReverse()
     {
-        WPI_TalonSRX liftLeft = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[1]);
-        WPI_TalonSRX liftRight = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
-
-        liftLeft.enableCurrentLimit(false);
-        liftRight.enableCurrentLimit(false);
-        liftLeft.set(ControlMode.PercentOutput, 0.0);
-        liftRight.set(ControlMode.PercentOutput, 0.0);
+        wLiftLeft.enableCurrentLimit(false);
+        wLiftRight.enableCurrentLimit(false);
+        wLiftLeft.set(ControlMode.PercentOutput, 0.0);
+        wLiftRight.set(ControlMode.PercentOutput, 0.0);
 
         super.driveReverse();
     }
@@ -66,26 +65,20 @@ public class Lift extends TRCDirectionalSystem
     @Override
     public void fullStop()
     {
-        WPI_TalonSRX liftLeft = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[1]);
-        WPI_TalonSRX liftRight = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
-
-        liftLeft.configContinuousCurrentLimit(Constants.LIFT_MAX_STALL_CURRENT);
-        liftRight.configContinuousCurrentLimit(Constants.LIFT_MAX_STALL_CURRENT);
-        liftLeft.enableCurrentLimit(true);
-        liftRight.enableCurrentLimit(true);
-        liftRight.set(ControlMode.Velocity, 0.0);
-        liftLeft.set(ControlMode.Follower, (Integer) this.outputMotors.keySet().toArray()[1]);
+        wLiftLeft.configContinuousCurrentLimit(Constants.LIFT_MAX_STALL_CURRENT);
+        wLiftRight.configContinuousCurrentLimit(Constants.LIFT_MAX_STALL_CURRENT);
+        wLiftLeft.enableCurrentLimit(true);
+        wLiftRight.enableCurrentLimit(true);
+        wLiftRight.set(ControlMode.Velocity, 0.0);
+        wLiftLeft.set(ControlMode.Follower, (Integer) this.outputMotors.keySet().toArray()[1]);
     }
 
     public void liftToLevel(int newLevel)
-    {
-        WPI_TalonSRX liftLeft = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[1]);
-        WPI_TalonSRX liftRight = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
-        
-        liftRight.set(ControlMode.Position, Constants.LIFT_TARGET_HEIGHTS[newLevel]);
-        liftLeft.set(ControlMode.Follower, (Integer) this.outputMotors.keySet().toArray()[1]);
+    {        
+        wLiftRight.set(ControlMode.Position, Constants.LIFT_TARGET_HEIGHTS[newLevel]);
+        wLiftLeft.set(ControlMode.Follower, (Integer) this.outputMotors.keySet().toArray()[1]);
 
-        while (liftRight.getSelectedSensorPosition() - liftRight.getClosedLoopTarget() < 50)
+        while (wLiftRight.getSelectedSensorPosition() - wLiftRight.getClosedLoopTarget() < 50)
         {
             super.driveForward();
         }

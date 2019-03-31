@@ -15,6 +15,8 @@ public class Arm extends TRCDirectionalSystem
 {
     private static boolean isReady = false;
     public static TRCTalonEncoder encoder;
+    private static WPI_TalonSRX wArmTalon;
+    private static TalonSRX armTalon;
 
     public Arm (int[] motorPorts, SpeedControllerType[] motorType)
     {
@@ -22,7 +24,8 @@ public class Arm extends TRCDirectionalSystem
         encoder = new TRCTalonEncoder(Constants.ARM_MOTOR, Constants.ARM_DISTANCE_PER_PULSE, false);
         encoder.reset();
 
-        TalonSRX armTalon = new TalonSRX((Integer) this.outputMotors.keySet().toArray()[0]);
+        armTalon = new TalonSRX((Integer) this.outputMotors.keySet().toArray()[0]);
+        wArmTalon = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
 
         armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
         armTalon.setSensorPhase(false);
@@ -43,7 +46,6 @@ public class Arm extends TRCDirectionalSystem
 
     public double getArmPos()
     {
-        TalonSRX armTalon = new TalonSRX((Integer) this.outputMotors.keySet().toArray()[0]);
         return armTalon.getSelectedSensorPosition();
     }
 
@@ -95,11 +97,9 @@ public class Arm extends TRCDirectionalSystem
     @Override
     public void driveForward()
     {
-        WPI_TalonSRX armTalon = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
-        if (checkOverdistance(armTalon)) { return; }
+        if (checkOverdistance(wArmTalon)) { return; }
 
-        armTalon.enableCurrentLimit(false);
-        //armTalon.set(ControlMode.PercentOutput, 0.0);
+        wArmTalon.enableCurrentLimit(false);
 
         super.driveForward();
     }
@@ -107,11 +107,9 @@ public class Arm extends TRCDirectionalSystem
     @Override
     public void driveReverse()
     {
-        WPI_TalonSRX armTalon = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
-        if (checkOverdistance(armTalon)) { return; }
+        if (checkOverdistance(wArmTalon)) { return; }
 
-        armTalon.enableCurrentLimit(false);
-        //armTalon.set(ControlMode.PercentOutput, 0.0);
+        wArmTalon.enableCurrentLimit(false);
 
         super.driveReverse();
     }
@@ -119,11 +117,10 @@ public class Arm extends TRCDirectionalSystem
     @Override
     public void fullStop()
     {
-        WPI_TalonSRX armTalon = (WPI_TalonSRX) this.outputMotors.get(this.outputMotors.keySet().toArray()[0]);
-        if (checkOverdistance(armTalon)) { return; }
+        if (checkOverdistance(wArmTalon)) { return; }
 
-        armTalon.configContinuousCurrentLimit(Constants.ARM_MAX_STALL_CURRENT);
-        armTalon.enableCurrentLimit(true);
-        armTalon.set(ControlMode.Velocity, 0.0);
+        wArmTalon.configContinuousCurrentLimit(Constants.ARM_MAX_STALL_CURRENT);
+        wArmTalon.enableCurrentLimit(true);
+        wArmTalon.set(ControlMode.Velocity, 0.0);
     }
 }
