@@ -30,7 +30,8 @@ public class Robot extends TimedRobot {
     TRCGyroBase gyro;
     TRCEncoderSet encoders;
     Drive drive;
-    TRCDirectionalSystem lift, grabber;
+    Lift lift;
+    Grabber grabber;
     Arm arm;
     TRCPneumaticSystem pokie;
     AnalogInput leftProx, rightProx;
@@ -85,12 +86,13 @@ public class Robot extends TimedRobot {
         // Setup: Autonomous
         TRCDrivePID.initializeTRCDrivePID(encoders, gyro, drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
         AutoAlign.setupAlignment(drive, leftProx, rightProx);
+        // AutoProcess.setupSystems(drive, lift, grabber, arm);
         TRCDriveContinuous.initializeTRCDriveContinuous(drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
         TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
 
-        AssistedControl.initializeAssistedControl(8);
-        AssistedControl.startCommunications();
-        AssistedControl.pauseCommunications();
+        // AssistedControl.initializeAssistedControl(8);
+        // AssistedControl.startCommunications();
+        // AssistedControl.pauseCommunications();
 
         // Setup: Input
         TRCDriveInput.initializeDriveInput(Constants.INPUT_PORTS, Constants.INPUT_TYPES, Constants.SPEED_BASE,
@@ -101,14 +103,16 @@ public class Robot extends TimedRobot {
         //        AssistedControl::startCommunications);
         //TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
         //        AssistedControl::pauseCommunications);
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
-                AssistedControl::startCommunications);
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
-                AssistedControl::pauseCommunications);
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_HATCH_BUTTON,
-                arm::armToHatch);
-        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_EASE_BUTTON,
-                arm::atEasePrivateArm);
+        // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
+        //         AssistedControl::startCommunications);
+        // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
+        //         AssistedControl::pauseCommunications);
+        // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_HATCH_BUTTON,
+        //         arm::armToHatch);
+        // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_ARM_EASE_BUTTON,
+        //         arm::atEasePrivateArm);
+        // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_CARGO_BUTTON,
+        //         AutoProcess::autoCargo);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,
         // Constants.INPUT_AUTO_GET_PANEL, AutoProcess::obtainPanel);
         // TRCDriveInput.bindButton(Constants.INPUT_DRIVER_PORT,

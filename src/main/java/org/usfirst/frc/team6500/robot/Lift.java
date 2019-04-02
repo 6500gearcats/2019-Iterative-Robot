@@ -14,6 +14,8 @@ public class Lift extends TRCDirectionalSystem
 {
     private static TalonSRX liftLeft, liftRight;
     private static WPI_TalonSRX wLiftLeft, wLiftRight;
+    private static boolean autoing;
+    private static int previousPos;
 
     public Lift(int[] motorPorts, SpeedControllerType[] motorTypes)
     {
@@ -37,6 +39,8 @@ public class Lift extends TRCDirectionalSystem
         liftRight.config_kP(0, 1, 30);
         liftRight.config_kI(0, 0, 30);
         liftRight.config_kD(0, 0, 30);
+
+        autoing = false;
     }
 
 
@@ -65,6 +69,8 @@ public class Lift extends TRCDirectionalSystem
     @Override
     public void fullStop()
     {
+        if (autoing) { return; }
+
         wLiftLeft.configContinuousCurrentLimit(Constants.LIFT_MAX_STALL_CURRENT);
         wLiftRight.configContinuousCurrentLimit(Constants.LIFT_MAX_STALL_CURRENT);
         wLiftLeft.enableCurrentLimit(true);
@@ -73,14 +79,32 @@ public class Lift extends TRCDirectionalSystem
         wLiftLeft.set(ControlMode.Follower, (Integer) this.outputMotors.keySet().toArray()[1]);
     }
 
-    public void liftToLevel(int newLevel)
-    {        
-        wLiftRight.set(ControlMode.Position, Constants.LIFT_TARGET_HEIGHTS[newLevel]);
-        wLiftLeft.set(ControlMode.Follower, (Integer) this.outputMotors.keySet().toArray()[1]);
+    // public void liftToLevel(int newLevel)
+    // {
+    //     previousPos = wLiftRight.getSelectedSensorPosition();
+    //     autoing = true;
 
-        while (wLiftRight.getSelectedSensorPosition() - wLiftRight.getClosedLoopTarget() < 50)
-        {
-            super.driveForward();
-        }
-    }
+    //     while (Math.abs(wLiftRight.getSelectedSensorPosition() - Constants.LIFT_TARGET_HEIGHTS[newLevel]) > 50)
+    //     {
+    //         wLiftLeft.enableCurrentLimit(false);
+    //         wLiftRight.enableCurrentLimit(false);
+    //         wLiftLeft.set(ControlMode.PercentOutput, Constants.LIFT_SPEED_UP);
+    //         wLiftRight.set(ControlMode.PercentOutput, Constants.LIFT_SPEED_UP);
+    //     }
+
+    //     autoing = false;
+    // }
+
+    // public void returnToPrevious()
+    // {
+    //     autoing = true;
+    //     while (Math.abs(wLiftRight.getSelectedSensorPosition() - previousPos) > 200)
+    //     {
+    //         wLiftLeft.enableCurrentLimit(false);
+    //         wLiftRight.enableCurrentLimit(false);
+    //         wLiftLeft.set(ControlMode.PercentOutput, Constants.LIFT_SPEED_DOWN);
+    //         wLiftRight.set(ControlMode.PercentOutput, Constants.LIFT_SPEED_DOWN);
+    //     }
+    //     autoing = false;
+    // }
 }

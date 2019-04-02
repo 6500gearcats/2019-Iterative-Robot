@@ -32,8 +32,9 @@ public class Constants
     public static final int INPUT_DRIVE_SLOW            = (INPUT_TYPES[INPUT_DRIVER_PORT] == ControllerType.Xbox360) ? 5 : 2;
     public static final Object INPUT_DRIVE_BUTTONS[]    = {INPUT_DRIVE_SLOW};
 
-    public static final int INPUT_AUTO_LINE_BUTTON      = 12;
-    public static final int INPUT_AUTO_KILL_BUTTON      = 11;
+    //public static final int INPUT_AUTO_LINE_BUTTON      = 12;
+    //public static final int INPUT_AUTO_KILL_BUTTON      = 11;
+    public static final int INPUT_AUTO_CARGO_BUTTON     = 12;
     public static final int INPUT_ARM_HATCH_BUTTON      = 10;
     public static final int INPUT_ARM_EASE_BUTTON       = 9;
     // public static final int INPUT_AUTO_GET_PANEL      = 3;
@@ -74,7 +75,7 @@ public class Constants
     public final static double LIFT_SPEED_DOWN                    = 0.3;
     public final static int LIFT_SWITCH_PORTS[]                   = {0, 1, 2, 3, 4};
     public final static int LIFT_MAX_STALL_CURRENT                = 5;
-    public final static double LIFT_TARGET_HEIGHTS[]              = {0, 14000};
+    public final static double LIFT_TARGET_HEIGHTS[]              = {0, -17000};
     public final static int LIFT_BOTTOM_SWITCH                    = 9;
     public final static double LIFT_TIME_CARGO                    = 1.25;
     
@@ -90,9 +91,9 @@ public class Constants
     public final static int ARM_MOTORS[]                          = {ARM_MOTOR};
     public final static SpeedControllerType ARM_MOTOR_TYPES[]     = {SpeedControllerType.CANTalonSRX};
     public final static double ARM_DISTANCE_PER_PULSE             = 0.0;
-    public final static double ARM_POSITION_UP                    = 5500.0;
-    public final static double ARM_POSITION_DOWN                  = -100.0;
-    public final static double ARM_POSITION_HATCH                 = 2000.0;
+    public final static double ARM_POSITION_UP                    = 7000.0;
+    public final static double ARM_POSITION_DOWN                  = 850.0;
+    public final static double ARM_POSITION_HATCH                 = 3000.0;
     public final static double ARM_POSITION_EASE                  = -50.0;
     public final static double ARM_SPEED_UP                       = -0.5;
     public final static double ARM_SPEED_DOWN                     = 0.25;

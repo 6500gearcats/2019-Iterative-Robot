@@ -68,7 +68,7 @@ public class AutoCargo implements TRCAutoRoute
         TRCDriveSync.requestChangeState(DriveSyncState.DriveContinuous);
         AssistedControl.startCommunications();
 
-        lift.liftToLevel(1);
+        //lift.liftToLevel(1);
         arm.armToHatch();
 
         boolean running = true;
