@@ -126,4 +126,9 @@ public class AssistedControl
             }
         }
     }
+
+    public static boolean getIsReading()
+    {
+        return isReading.get();
+    }
 }

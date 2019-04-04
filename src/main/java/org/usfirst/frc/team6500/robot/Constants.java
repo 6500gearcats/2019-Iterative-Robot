@@ -30,7 +30,8 @@ public class Constants
     public static final double INPUT_DRIVE_DEADBAND     = 0.1;
     // ternary ftw
     public static final int INPUT_DRIVE_SLOW            = (INPUT_TYPES[INPUT_DRIVER_PORT] == ControllerType.Xbox360) ? 5 : 2;
-    public static final Object INPUT_DRIVE_BUTTONS[]    = {INPUT_DRIVE_SLOW};
+    public static final int INPUT_AUTO_ALIGN            = (INPUT_TYPES[INPUT_DRIVER_PORT] == ControllerType.Xbox360) ? 7 : 7;
+    public static final Object INPUT_DRIVE_BUTTONS[]    = {INPUT_DRIVE_SLOW, INPUT_AUTO_ALIGN};
 
     //public static final int INPUT_AUTO_LINE_BUTTON      = 12;
     //public static final int INPUT_AUTO_KILL_BUTTON      = 11;

@@ -158,7 +158,10 @@ public class Robot extends TimedRobot {
 
         // Setup: Input: Button Bindings: Driver Functions
         TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_SLOW, drive::setSlowOn);
-        TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_BUTTONS, drive::setSlowOff);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_AUTO_ALIGN, AssistedControl::startCommunications);
+        
+        TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, new Object[]{Constants.INPUT_DRIVE_SLOW}, drive::setSlowOff);
+        TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, new Object[]{Constants.INPUT_AUTO_ALIGN}, AssistedControl::pauseCommunications);
     }
 
     /**
