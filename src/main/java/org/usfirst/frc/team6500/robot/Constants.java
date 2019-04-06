@@ -32,8 +32,8 @@ public class Constants
     public static final int INPUT_DRIVE_SLOW            = (INPUT_TYPES[INPUT_DRIVER_PORT] == ControllerType.Xbox360) ? 5 : 2;
     public static final Object INPUT_DRIVE_BUTTONS[]    = {INPUT_DRIVE_SLOW};
 
-    //public static final int INPUT_AUTO_LINE_BUTTON      = 12;
-    //public static final int INPUT_AUTO_KILL_BUTTON      = 11;
+    public static final int INPUT_AUTO_LINE_BUTTON      = 12;
+    public static final int INPUT_AUTO_KILL_BUTTON      = 11;
     public static final int INPUT_AUTO_CARGO_BUTTON     = 12;
     public static final int INPUT_ARM_HATCH_BUTTON      = 10;
     public static final int INPUT_ARM_EASE_BUTTON       = 9;

@@ -90,19 +90,19 @@ public class Robot extends TimedRobot {
         TRCDriveContinuous.initializeTRCDriveContinuous(drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
         TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
 
-        // AssistedControl.initializeAssistedControl(8);
-        // AssistedControl.startCommunications();
-        // AssistedControl.pauseCommunications();
+        AssistedControl.initializeAssistedControl(8);
+        AssistedControl.startCommunications();
+        AssistedControl.pauseCommunications();
 
         // Setup: Input
         TRCDriveInput.initializeDriveInput(Constants.INPUT_PORTS, Constants.INPUT_TYPES, Constants.SPEED_BASE,
                 Constants.SPEED_BOOST);
 
         // Setup: Input: Button Bindings: Autonomous Functions
-        //TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
-        //        AssistedControl::startCommunications);
-        //TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
-        //        AssistedControl::pauseCommunications);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
+               AssistedControl::startCommunications);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
+               AssistedControl::pauseCommunications);
         // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
         //         AssistedControl::startCommunications);
         // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
@@ -159,6 +159,8 @@ public class Robot extends TimedRobot {
         // Setup: Input: Button Bindings: Driver Functions
         TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_SLOW, drive::setSlowOn);
         TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_BUTTONS, drive::setSlowOff);
+    
+        TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
     }
 
     /**
@@ -204,7 +206,6 @@ public class Robot extends TimedRobot {
 
     public void driveRobot()
     {
-        TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
         // Check all inputs
         TRCDriveInput.checkButtonBindings();
         // And drive the robot
@@ -212,7 +213,10 @@ public class Robot extends TimedRobot {
         try
         {
             TRCDriveSync.assertTeleop();
-            drive.driveCartesian(input);
+            if (TRCDriveSync.getState() == DriveSyncState.Teleop)
+            {
+                drive.driveCartesian(input);
+            }
         }
         catch (AssertionError e)
         {
@@ -229,6 +233,5 @@ public class Robot extends TimedRobot {
     public static void main(String... args) throws InterruptedException
     {
         RobotBase.startRobot(Robot::new);
-        // request data from the Arduin
     }
 }

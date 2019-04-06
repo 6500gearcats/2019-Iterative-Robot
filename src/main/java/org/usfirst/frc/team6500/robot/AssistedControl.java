@@ -40,11 +40,15 @@ public class AssistedControl
     public static void resumeCommunications() 
     {
         isReading.set(true);
+        TRCDriveSync.requestChangeState(DriveSyncState.DriveContinuous);
+        TRCDriveContinuous.resumeDriveContinuous();
     }
 
     public static void pauseCommunications() 
     {
         isReading.set(false);
+        TRCDriveContinuous.pauseDriveContinuous();
+        TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
     }
 
     private static int[] requestData() 
