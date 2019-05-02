@@ -1,29 +1,29 @@
-// package org.usfirst.frc.team6500.robot;
+package org.usfirst.frc.team6500.robot;
 
 
-// import org.usfirst.frc.team6500.trc.auto.TRCDirectionalSystemAction;
-// import org.usfirst.frc.team6500.trc.auto.TRCDrivePID;
-// import org.usfirst.frc.team6500.trc.auto.TRCPneumaticSystemAction;
-// import org.usfirst.frc.team6500.trc.util.TRCTypes.DirectionalSystemActionType;
-// import org.usfirst.frc.team6500.trc.util.TRCTypes.DriveActionType;
-// import org.usfirst.frc.team6500.trc.util.TRCTypes.PneumaticSystemActionType;
-// import org.usfirst.frc.team6500.trc.wrappers.systems.drives.TRCMecanumDrive;
+import org.usfirst.frc.team6500.trc.auto.TRCDirectionalSystemAction;
+import org.usfirst.frc.team6500.trc.auto.TRCDrivePID;
+import org.usfirst.frc.team6500.trc.auto.TRCPneumaticSystemAction;
+import org.usfirst.frc.team6500.trc.util.TRCTypes.DirectionalSystemActionType;
+import org.usfirst.frc.team6500.trc.util.TRCTypes.DriveActionType;
+import org.usfirst.frc.team6500.trc.util.TRCTypes.PneumaticSystemActionType;
+import org.usfirst.frc.team6500.trc.wrappers.systems.drives.TRCMecanumDrive;
 
 
-// public class AutoProcess
-// {
-//     public static TRCMecanumDrive drive;
-//     public static Lift lift;
-//     public static Grabber grabber;
-//     public static Arm arm;
+public class AutoProcess
+{
+    public static TRCMecanumDrive drive;
+    public static Lift lift;
+    public static Grabber grabber;
+    public static Arm arm;
 
-//     public static void setupSystems(TRCMecanumDrive nDrive, Lift nLift, Grabber nGrabber, Arm nArm)
-//     {
-//         drive = nDrive;
-//         lift = nLift;
-//         grabber = nGrabber;
-//         arm = nArm;
-//     }
+    public static void setupSystems(TRCMecanumDrive nDrive, Lift nLift, Grabber nGrabber, Arm nArm)
+    {
+        drive = nDrive;
+        lift = nLift;
+        grabber = nGrabber;
+        arm = nArm;
+    }
 
 
 //     public static void grabPanel()
@@ -48,12 +48,12 @@
 //         grabber.driveReverse();
 //     }
 
-//     public static void ejectCargo()
-//     {
-//         TRCDirectionalSystemAction ejectCargo = new TRCDirectionalSystemAction("Grabber", DirectionalSystemActionType.Forward, 2.0, false);
+    public static void ejectCargo()
+    {
+        TRCDirectionalSystemAction ejectCargo = new TRCDirectionalSystemAction("Grabber", DirectionalSystemActionType.Forward, 2.0, false);
 
-//         ejectCargo.start();
-//     }
+        ejectCargo.start();
+    }
 
 //     // public static void armUp()
 //     // {
@@ -65,16 +65,16 @@
 //     //     arm.armToDown();
 //     // }
 
-//     // public static void autoCargo()
-//     // {
-//     //     arm.armToHatch();
-//     //     lift.liftToLevel(1);
-//     //     arm.armToHatch();
-//     //     TRCDrivePID.run(DriveActionType.Forward, 10);
-//     //     ejectCargo();
-//     //     TRCDrivePID.run(DriveActionType.Forward, -10);
-//     //     lift.returnToPrevious();
-//     // }
+    public static void autoCargo()
+    {
+        arm.armToHatch();
+        //lift.liftToLevel(1);
+        arm.armToHatch();
+        TRCDrivePID.run(DriveActionType.Forward, 10);
+        ejectCargo();
+        TRCDrivePID.run(DriveActionType.Forward, -10);
+        //lift.returnToPrevious();
+    }
 
 
 //     public static void obtainPanel()
@@ -130,4 +130,4 @@
 //         lift.liftToLevel(4);
 //         ejectCargo();
 //     }
-// }
+}

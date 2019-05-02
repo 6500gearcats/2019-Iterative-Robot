@@ -92,7 +92,7 @@ public class AssistedControl
             int[] recvData = requestData();
             int data = recvData[0];
             int threshold = 16;
-            //System.out.println(data);
+            System.out.println(data);
             //TRCNetworkData.updateDataPoint("LFC", data);
             
             if (data < 0) { continue; }
@@ -115,10 +115,11 @@ public class AssistedControl
                 }
                 catch (Exception e)
                 {
-                    //System.out.println(e);
+                    System.out.println(e);
                 }
 
                 TRCDriveContinuous.setDriveContinuousActionType(actionType);
+                System.out.println("driving");
             }
             catch (AssertionError e)
             {

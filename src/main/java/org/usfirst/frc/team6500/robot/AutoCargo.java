@@ -11,8 +11,6 @@ import org.usfirst.frc.team6500.trc.wrappers.sensors.TRCEncoderSet;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 
-import org.usfirst.frc.team6500.trc.auto.TRCDirectionalSystemAction;
-
 
 public class AutoCargo implements TRCAutoRoute
 {
@@ -25,8 +23,8 @@ public class AutoCargo implements TRCAutoRoute
     private TRCEncoderSet encoders;
     private AnalogInput leftProximity, rightProximity;
     private Lift lift;
-    private Arm arm;
     private Grabber grabber;
+    private Arm arm;
 
     public AutoCargo(CargoPositionType cargoPos, boolean left, TRCEncoderSet encoderSet, AnalogInput leftProx, AnalogInput rightProx, Lift nlift, Arm narm, Grabber ngrabber)
     {

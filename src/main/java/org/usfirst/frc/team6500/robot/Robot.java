@@ -1,7 +1,7 @@
 package org.usfirst.frc.team6500.robot;
 
+
 import org.usfirst.frc.team6500.robot.Constants;
-import org.usfirst.frc.team6500.robot.Constants.CargoPositionType;
 import org.usfirst.frc.team6500.trc.auto.TRCDirectionalSystemAction;
 import org.usfirst.frc.team6500.trc.auto.TRCDrivePID;
 import org.usfirst.frc.team6500.trc.auto.TRCDriveContinuous;
@@ -9,7 +9,6 @@ import org.usfirst.frc.team6500.trc.auto.TRCDriveSync;
 import org.usfirst.frc.team6500.trc.auto.TRCPneumaticSystemAction;
 import org.usfirst.frc.team6500.trc.sensors.TRCCamera;
 import org.usfirst.frc.team6500.trc.sensors.TRCNetworkVision;
-import org.usfirst.frc.team6500.trc.systems.TRCDirectionalSystem;
 import org.usfirst.frc.team6500.trc.systems.TRCDriveInput;
 import org.usfirst.frc.team6500.trc.systems.TRCPneumaticSystem;
 import org.usfirst.frc.team6500.trc.util.TRCNetworkData;
@@ -21,11 +20,11 @@ import org.usfirst.frc.team6500.trc.wrappers.sensors.TRCGyroBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.RobotBase;
 
-public class Robot extends TimedRobot {
+
+public class Robot extends TimedRobot
+{
     // Robot member definitions
     TRCGyroBase gyro;
     TRCEncoderSet encoders;
@@ -73,6 +72,8 @@ public class Robot extends TimedRobot {
         pokie = new TRCPneumaticSystem(Constants.POKIE_PORTS, true);
         TRCPneumaticSystemAction.registerSystem("Pokie", pokie);
 
+        //MotorSafety.initializeMotorSafety();
+
         // Setup: Systems: Sensors
         gyro = new TRCGyroBase(GyroType.ADXRS450);
         encoders = new TRCEncoderSet(Constants.ENCODER_INPUTS, Constants.ENCODER_DISTANCES_PER_PULSE, false, 4,
@@ -86,23 +87,23 @@ public class Robot extends TimedRobot {
         // Setup: Autonomous
         TRCDrivePID.initializeTRCDrivePID(encoders, gyro, drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
         AutoAlign.setupAlignment(drive, leftProx, rightProx);
-        // AutoProcess.setupSystems(drive, lift, grabber, arm);
+        AutoProcess.setupSystems(drive, lift, grabber, arm);
         TRCDriveContinuous.initializeTRCDriveContinuous(drive, DriveType.Mecanum, Constants.SPEED_AUTO_TAPE);
         TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
 
-        // AssistedControl.initializeAssistedControl(8);
-        // AssistedControl.startCommunications();
-        // AssistedControl.pauseCommunications();
+        AssistedControl.initializeAssistedControl(8);
+        //AssistedControl.startCommunications();
+        //AssistedControl.pauseCommunications();
 
         // Setup: Input
         TRCDriveInput.initializeDriveInput(Constants.INPUT_PORTS, Constants.INPUT_TYPES, Constants.SPEED_BASE,
                 Constants.SPEED_BOOST);
 
         // Setup: Input: Button Bindings: Autonomous Functions
-        //TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
-        //        AssistedControl::startCommunications);
-        //TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
-        //        AssistedControl::pauseCommunications);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
+               AssistedControl::startCommunications);
+        TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
+               AssistedControl::pauseCommunications);
         // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_LINE_BUTTON,
         //         AssistedControl::startCommunications);
         // TRCDriveInput.bindButtonPress(Constants.INPUT_GUNNER_PORT, Constants.INPUT_AUTO_KILL_BUTTON,
@@ -161,6 +162,12 @@ public class Robot extends TimedRobot {
         TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_BUTTONS, drive::setSlowOff);
     }
 
+    @Override
+    public void disabledInit()
+    {
+        //MotorSafety.checkLiftImbalance();
+    }
+
     /**
      * Code here will run once at the start of autonomous
      */
@@ -169,7 +176,7 @@ public class Robot extends TimedRobot {
     {
         encoders.resetAllEncoders();
         gyro.reset();
-        //AssistedControl.startCommunications();
+        AssistedControl.startCommunications();
         //AutoCargo cargo = new AutoCargo(CargoPositionType.Close, false, encoders, leftProx, rightProx);
         //cargo.run();
     }
@@ -204,7 +211,8 @@ public class Robot extends TimedRobot {
 
     public void driveRobot()
     {
-        TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
+        TRCDriveSync.requestChangeState(DriveSyncState.DriveContinuous);
+        //MotorSafety.checkVoltages();
         // Check all inputs
         TRCDriveInput.checkButtonBindings();
         // And drive the robot
