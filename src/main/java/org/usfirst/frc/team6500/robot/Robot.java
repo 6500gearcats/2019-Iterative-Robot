@@ -92,8 +92,8 @@ public class Robot extends TimedRobot
         TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
 
         AssistedControl.initializeAssistedControl(8);
-        //AssistedControl.startCommunications();
-        //AssistedControl.pauseCommunications();
+        AssistedControl.startCommunications();
+        AssistedControl.pauseCommunications();
 
         // Setup: Input
         TRCDriveInput.initializeDriveInput(Constants.INPUT_PORTS, Constants.INPUT_TYPES, Constants.SPEED_BASE,
@@ -160,6 +160,8 @@ public class Robot extends TimedRobot
         // Setup: Input: Button Bindings: Driver Functions
         TRCDriveInput.bindButtonPress(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_SLOW, drive::setSlowOn);
         TRCDriveInput.bindButtonAbsence(Constants.INPUT_DRIVER_PORT, Constants.INPUT_DRIVE_BUTTONS, drive::setSlowOff);
+    
+        TRCDriveSync.requestChangeState(DriveSyncState.Teleop);
     }
 
     @Override
@@ -211,8 +213,6 @@ public class Robot extends TimedRobot
 
     public void driveRobot()
     {
-        TRCDriveSync.requestChangeState(DriveSyncState.DriveContinuous);
-        //MotorSafety.checkVoltages();
         // Check all inputs
         TRCDriveInput.checkButtonBindings();
         // And drive the robot
@@ -220,7 +220,10 @@ public class Robot extends TimedRobot
         try
         {
             TRCDriveSync.assertTeleop();
-            drive.driveCartesian(input);
+            if (TRCDriveSync.getState() == DriveSyncState.Teleop)
+            {
+                drive.driveCartesian(input);
+            }
         }
         catch (AssertionError e)
         {
@@ -237,6 +240,5 @@ public class Robot extends TimedRobot
     public static void main(String... args) throws InterruptedException
     {
         RobotBase.startRobot(Robot::new);
-        // request data from the Arduin
     }
 }

@@ -34,9 +34,9 @@ public class Constants
 
     public static final int INPUT_AUTO_LINE_BUTTON      = 12;
     public static final int INPUT_AUTO_KILL_BUTTON      = 11;
-    //public static final int INPUT_AUTO_CARGO_BUTTON     = 12;
-    // public static final int INPUT_ARM_HATCH_BUTTON      = 10;
-    // public static final int INPUT_ARM_EASE_BUTTON       = 9;
+    public static final int INPUT_AUTO_CARGO_BUTTON     = 12;
+    public static final int INPUT_ARM_HATCH_BUTTON      = 10;
+    public static final int INPUT_ARM_EASE_BUTTON       = 9;
     // public static final int INPUT_AUTO_GET_PANEL      = 3;
     // public static final int INPUT_AUTO_GET_CARGO      = 4;
     // public static final int INPUT_AUTO_L1_PANEL       = 11;
